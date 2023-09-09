@@ -80,7 +80,7 @@ rm -rI $PREFIX/bin/ub $PREFIX/bin/ubuntu $HOME/ubuntu-{armhf,arm64}
 
 ## Bugs
 
-Currently, there aren't any bugs **that i know about** but please let me know in the [issues section][i0] if you find any.
+Currently, there aren't any bugs **that i know about** but please let me know in the [issues section][i0] if you find any or for improvement suggestions.
 
 ## License
 
