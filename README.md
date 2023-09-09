@@ -67,7 +67,7 @@ After starting the VNC server, install [NetHunter KeX](https://store.nethunter.c
 Copy and paste below commands in **Ubuntu**. The commands below **need to be run as root**.
 
 ```
-apt update && apt full-upgrade unminimize <<<"y" && apt install man sudo dbus-x11 tigervnc-standalone-server ubuntu-desktop-minimal
+apt update && apt full-upgrade && unminimize <<<"y" && apt install man sudo dbus-x11 tigervnc-standalone-server ubuntu-desktop-minimal
 ```
 
 ## How to Uninstall Ubuntu
