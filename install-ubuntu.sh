@@ -308,7 +308,7 @@ _CREATE_VNC_LAUNCHER() {
 		}
 
 		_SET_PASSWD() {
-		    [ -x "\$(command -v vncpasswd)" ] && vncpasswd || { echo "echo ">> No VNC server installed"" && return 1 }
+		    [ -x "\$(command -v vncpasswd)" ] && vncpasswd || { echo ">> No VNC server installed" && return 1; }
 		    return \$?
 		}
 
