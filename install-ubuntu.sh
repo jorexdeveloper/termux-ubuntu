@@ -4,7 +4,7 @@
 #                                                                              #
 #     Ubuntu Installer, version 1.0                                            #
 #                                                                              #
-#     Install Ubuntu in Termux.                                                #
+#     Installs Ubuntu in Termux.                                               #
 #                                                                              #
 #     Copyright (C) 2023  Jore <https://github.com/jorexdeveloper>             #
 #                                                                              #
@@ -70,7 +70,7 @@ _CHECK_ARCHITECTURE() {
 	fi
 }
 
-# Che<ks for required dependencies
+# Che<ks for dependencies
 _CHECK_DEPENDENCIES() {
 	_PRINT_TITLE "Updating system"
 	# Workaround for termux-app issue #1283 (https://github.com/termux/termux-app/issues/1283)
@@ -89,17 +89,17 @@ _CHECK_DEPENDENCIES() {
 	done
 }
 
-# Checks foor existing ROOTFS_DIR
-# Sets KEEP_ROOTFS_DIR
+# Checks for existing rootfs directory
+# Sets KEEP_ROOTFS_DIRECTORY
 _CHECK_ROOTFS_DIRECTORY() {
-	unset KEEP_ROOTFS_DIR
-	if [ -e "${ROOTFS_DIR}" ]; then
-		if [ -d "${ROOTFS_DIR}" ]; then
+	unset KEEP_ROOTFS_DIRECTORY
+	if [ -e "${ROOTFS_DIRECTORY}" ]; then
+		if [ -d "${ROOTFS_DIRECTORY}" ]; then
 			if _ASK "Existing rootfs directory found. Delete and create a new one" "N"; then
 				_PRINT_MESSAGE "Deleting rootfs directory" E
 			elif _ASK "Rootfs directory might be corrupted, use it anyway" "N"; then
 				_PRINT_MESSAGE "Using existing rootfs directory"
-				KEEP_ROOTFS_DIR=1
+				KEEP_ROOTFS_DIRECTORY=1
 				return
 			else
 				_PRINT_ERROR_EXIT "Rootfs directory not touched"
@@ -111,7 +111,7 @@ _CHECK_ROOTFS_DIRECTORY() {
 				_PRINT_ERROR_EXIT "Item not touched"
 			fi
 		fi
-		rm -rf "${ROOTFS_DIR}" && _PRINT_MESSAGE "Deleted successfully" || _PRINT_ERROR_EXIT "Failed to delete"
+		rm -rf "${ROOTFS_DIRECTORY}" && _PRINT_MESSAGE "Deleted successfully" || _PRINT_ERROR_EXIT "Failed to delete"
 	fi
 }
 
@@ -119,23 +119,25 @@ _CHECK_ROOTFS_DIRECTORY() {
 # Sets KEEP_ROOTFS_MAGE
 _DOWNLOAD_ROOTFS_ARCHIVE() {
 	unset KEEP_ROOTFS_MAGE
-	if [ -z "${KEEP_ROOTFS_DIR}" ]; then
-		if [ -f "${ARCHIVE_NAME}" ]; then
-			if _ASK "Existing roots archive found. Delete and download a new one" "N"; then
-				_PRINT_MESSAGE "Deleting old roots archive" E
+	if [ -z "${KEEP_ROOTFS_DIRECTORY}" ]; then
+		if [ -e "${ARCHIVE_NAME}" ]; then
+			if [ -f "${ARCHIVE_NAME}" ]; then
+				if _ASK "Existing roots archive found. Delete and download a new one" "N"; then
+					_PRINT_MESSAGE "Deleting old roots archive" E
+				else
+					_PRINT_MESSAGE "Using existing rootfs archive"
+					KEEP_ROOTFS_MAGE=1
+					return
+				fi
 			else
-				_PRINT_MESSAGE "Using existing rootfs archive"
-				KEEP_ROOTFS_MAGE=1
-				return
+				if _ASK "Item found with same name as rootfs archive. Delete item" "N"; then
+					_PRINT_MESSAGE "Deleting item" E
+				else
+					_PRINT_ERROR_EXIT "Item not touched"
+				fi
 			fi
-		elif [ -e "${ARCHIVE_NAME}" ]; then
-			if _ASK "Item found with same name as rootfs archive. Delete item" "N"; then
-				_PRINT_MESSAGE "Deleting item" E
-			else
-				_PRINT_ERROR_EXIT "Item not touched"
-			fi
+			rm -f "${ARCHIVE_NAME}" && _PRINT_MESSAGE "Deleted successfully" || _PRINT_ERROR_EXIT "Failed to delete"
 		fi
-		rm -f "${ARCHIVE_NAME}" && _PRINT_MESSAGE "Deleted successfully" || _PRINT_ERROR_EXIT "Failed to delete"
 		_PRINT_TITLE "Downloading rootfs archive"
 		wget --no-verbose --continue --show-progress --output-document="${ARCHIVE_NAME}" "${BASE_URL}/${ARCHIVE_NAME}" && _PRINT_MESSAGE "Download complete" || _PRINT_ERROR_EXIT "Failed to download rootfs archive" 1
 	fi
@@ -143,19 +145,22 @@ _DOWNLOAD_ROOTFS_ARCHIVE() {
 
 # Verifies integrity of rootfs archive
 _VERIFY_ROOTFS_ARCHIVE() {
-	if [ -z "${KEEP_ROOTFS_DIR}" ]; then
+	if [ -z "${KEEP_ROOTFS_DIRECTORY}" ]; then
 		_PRINT_TITLE "Verifying integrity of the rootfs archive"
-		local TRUSTED_SHASUMS=(
-			"8deb8c185e66c0a7aea45ffa70000d609b0269e23a7af8433398486edfa81910 *ubuntu-kinetic-core-cloudimg-armhf-root.tar.gz"
-			"a851c717d90610d3e9528c35a26fdc40a7111c069d7a923ab094c6fcf0b7b5f6 *ubuntu-kinetic-core-cloudimg-arm64-root.tar.gz"
-			"639dc3b4617c3e9cf809d68d0b8df72d64233dba030d0750786ef7bd67d29b92 *ubuntu-kinetic-core-cloudimg-armhf.manifest"
-			"5411524946322b60e658df304eeae33dec5418072189f5c09be50cf0eb926363 *ubuntu-kinetic-core-cloudimg-arm64.manifest"
+		# 2023-06-30 14:16
+		local TRUSTED_SHASUMS=$(
+			cat <<-EOF
+				8deb8c185e66c0a7aea45ffa70000d609b0269e23a7af8433398486edfa81910 *ubuntu-kinetic-core-cloudimg-armhf-root.tar.gz
+				a851c717d90610d3e9528c35a26fdc40a7111c069d7a923ab094c6fcf0b7b5f6 *ubuntu-kinetic-core-cloudimg-arm64-root.tar.gz
+				639dc3b4617c3e9cf809d68d0b8df72d64233dba030d0750786ef7bd67d29b92 *ubuntu-kinetic-core-cloudimg-armhf.manifest
+				5411524946322b60e658df304eeae33dec5418072189f5c09be50cf0eb926363 *ubuntu-kinetic-core-cloudimg-arm64.manifest
+			EOF
 		)
-		if echo "${TRUSTED_SHASUMS}" | grep -e "${ARCHIVE_NAME}" | sha256sum --check &>/dev/null; then
+		if grep -e "${ARCHIVE_NAME}" <<<"${TRUSTED_SHASUMS}" | sha256sum --quiet --check &>/dev/null; then
 			_PRINT_MESSAGE "Rootfs archive is ok"
 			return
 		elif TRUSTED_SHASUMS="$(wget --quiet --output-document="-" "${BASE_URL}/SHA256SUMS")"; then
-			if echo "${TRUSTED_SHASUMS}" | grep -e "${ARCHIVE_NAME}" | sha256sum --check &>/dev/null; then
+			if grep -e "${ARCHIVE_NAME}" <<<"${TRUSTED_SHASUMS}" | sha256sum --quiet --check &>/dev/null; then
 				_PRINT_MESSAGE "Rootfs archive is ok"
 				return
 			fi
@@ -168,39 +173,39 @@ _VERIFY_ROOTFS_ARCHIVE() {
 
 # Extracts rootfs archive
 _EXTRACT_ROOTFS_ARCHIVE() {
-	if [ -z "${KEEP_ROOTFS_DIR}" ]; then
+	if [ -z "${KEEP_ROOTFS_DIRECTORY}" ]; then
 		_PRINT_TITLE "Extracting rootfs archive"
-		local tmp_xtract_dir="${TMPDIR}/${DEFAULT_ROOTFS_DIR}" # Termux sets TMPDIR
-		if [ -e "${tmp_xtract_dir}" ]; then
-			rm -rf "${tmp_xtract_dir}" || _PRINT_ERROR_EXIT "Fatal extraction error(0)" 0
-		fi
-		mkdir -p "${tmp_xtract_dir}" || _PRINT_ERROR_EXIT "Fatal extraction error(1)" 0
-		printf "${G}"
-		proot --link2symlink tar --extract --file="${ARCHIVE_NAME}" --directory="${tmp_xtract_dir}" --checkpoint=1 --checkpoint-action=ttyout="   Files extracted %{}T in %ds%*\r" &>/dev/null || _PRINT_ERROR_EXIT "Failed to extract rootfs archive" 0
+		# These cause mknod errors and tar exits with non zero
+		local exclude_files=(
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/null"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/tty"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/full"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/urandom"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/zero"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/random"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/console"
+			"--exclude=${DEFAULT_ROOTFS_DIRECTORY}/dev/ptmx"
+		)
+		printf "${Y}"
+		mkdir -p "${ROOTFS_DIRECTORY}"
+		proot --link2symlink tar --extract --file="${ARCHIVE_NAME}" --directory="${ROOTFS_DIRECTORY}" --checkpoint=1 --checkpoint-action=ttyout="   Files extracted %{}T in %ds%*\r" "${exclude_files[@]}" &>/dev/null || _PRINT_ERROR_EXIT "Failed to extract rootfs archive" 0
 		printf "${N}"
-		if [ -d "${tmp_xtract_dir}" ]; then
-			if [ -e "${ROOTFS_DIR}" ]; then
-				rm -rf "${ROOTFS_DIR}"
-			fi
-			mv "${tmp_xtract_dir}" "${ROOTFS_DIR}" && _PRINT_MESSAGE "Extraction complete" || _PRINT_ERROR_EXIT "Fatal extraction error(2)" 0
-		else
-			_PRINT_ERROR_EXIT "Fatal extraction error(3)" 0
-		fi
 	fi
 }
 
-# Creates a script to start Ubuntu
+# Creates script to start ubuntu
 _CREATE_UBUNTU_LAUNCHER() {
-	_PRINT_TITLE "Creating Ubuntu launcher"
-	local UBUNTU_LAUNCHER="${PREFIX}/bin/ubuntu"
-	mkdir -p "${PREFIX}/bin" && cat >"${UBUNTU_LAUNCHER}" <<-EOF
+	_PRINT_TITLE "Creating ${DISTRO_NAME} launcher"
+	local DISTRO_LAUNCHER="${PREFIX}/bin/ubuntu"
+	local DISTRO_SHORTCUT="${PREFIX}/bin/ub"
+	mkdir -p "${PREFIX}/bin" && cat >"${DISTRO_LAUNCHER}" <<-EOF
 		#!/data/data/com.termux/files/usr/bin/bash -e
 
 		################################################################################
 		#                                                                              #
-		#     Ubuntu launcher, version ${SCRIPT_VERSION}                                             #
+		#     ${DISTRO_NAME} launcher, version ${SCRIPT_VERSION}                                             #
 		#                                                                              #
-		#     This script starts Ubuntu.                                               #
+		#     This script starts ${DISTRO_NAME}.                                               #
 		#                                                                              #
 		#     Copyright (C) 2023  ${AUTHOR_NAME} <${AUTHOR_GITHUB}>             #
 		#                                                                              #
@@ -214,19 +219,19 @@ _CREATE_UBUNTU_LAUNCHER() {
 		unset LD_PRELOAD
 
 		# Workaround for Libreoffice, also needs to bind a fake /proc/version
-		if [ ! -f "${ROOTFS_DIR}/root/.version" ]; then
-		    touch "${ROOTFS_DIR}/root/.version"
+		if [ ! -f "${ROOTFS_DIRECTORY}/root/.version" ]; then
+		    touch "${ROOTFS_DIRECTORY}/root/.version"
 		fi
 
-		# Command to start Ubuntu
+		# Command to start ${DISTRO_NAME}
 		command="proot"
 		command+=" --link2symlink"
 		command+=" --kill-on-exit"
 		command+=" --root-id"
-		command+=" --rootfs=${ROOTFS_DIR}"
+		command+=" --rootfs=${ROOTFS_DIRECTORY}"
 		command+=" --bind=/dev"
 		command+=" --bind=/proc"
-		command+=" --bind=${ROOTFS_DIR}/root:/dev/shm"
+		command+=" --bind=${ROOTFS_DIRECTORY}/root:/dev/shm"
 		command+=" --cwd=/"
 
 		# Add acess to internal storage
@@ -249,14 +254,16 @@ _CREATE_UBUNTU_LAUNCHER() {
 		# Execute launch command
 		exec \${command}
 	EOF
-	termux-fix-shebang "${UBUNTU_LAUNCHER}" && chmod 700 "${UBUNTU_LAUNCHER}" && _PRINT_MESSAGE "Ubuntu launcher created successfully" || _PRINT_ERROR_EXIT "Failed to create Ubuntu launcher" 0
+	{
+		ln -sfT "${DISTRO_LAUNCHER}" "${DISTRO_SHORTCUT}" &>/dev/null && termux-fix-shebang "${DISTRO_LAUNCHER}" && chmod 700 "${DISTRO_LAUNCHER}"
+	} && _PRINT_MESSAGE "${DISTRO_NAME} launcher created successfully" || _PRINT_ERROR_EXIT "Failed to create ${DISTRO_NAME} launcher" 0
 }
 
-# Creates VNC launcher in Ubuntu
+# Creates VNC launcher
 _CREATE_VNC_LAUNCHER() {
 	_PRINT_TITLE "Creating VNC launcher"
-	local VNC_LAUNCHER="${ROOTFS_DIR}/usr/local/bin/vnc"
-	mkdir -p "${ROOTFS_DIR}/usr/local/bin" && cat >"${VNC_LAUNCHER}" <<-EOF
+	local VNC_LAUNCHER="${ROOTFS_DIRECTORY}/usr/local/bin/vnc"
+	mkdir -p "${ROOTFS_DIRECTORY}/usr/local/bin" && cat >"${VNC_LAUNCHER}" <<-EOF
 		#!/usr/bin/bash -e
 
 		################################################################################
@@ -275,7 +282,7 @@ _CREATE_VNC_LAUNCHER() {
 
 		_CHECK_USER() {
 		    if [ "\${USER}" = "root" ] || [ "\${EUID}" -eq 0 ] || [ "\$(whoami)" = "root" ]; then
-		        read -p ">> Some applications are not meant to be run as root and may not work properly. Continue anyway? y/N " -rn 1 REPLY
+		        read -rep ">> Some applications are not meant to be run as root and may not work properly. Continue anyway? y/N " -rn 1 REPLY
 		        echo ""
 		        case "\${REPLY}" in
 		            y | Y) return ;;
@@ -301,12 +308,12 @@ _CREATE_VNC_LAUNCHER() {
 		}
 
 		_SET_PASSWD() {
-		    vncpasswd
+		    [ -x "\$(command -v vncpasswd)" ] && vncpasswd || { echo "echo ">> No VNC server installed"" && return 1 }
 		    return \$?
 		}
 
 		_START_SERVER() {
-		    if [ -f "\${HOME}/.vnc/passwd" ]; then
+		    if [ -f "\${HOME}/.vnc/passwd" ] && [ -r "\${HOME}/.vnc/passwd" ]; then
 		        export HOME="\${HOME}"
 		        export USER="\${USER}"
 		        LD_PRELOAD="${LIB_GCC_PATH}"
@@ -349,10 +356,10 @@ _CREATE_VNC_LAUNCHER() {
 		WIDTH_VALUE=720
 		HEIGHT_VALUE=1600
 		ORIENTATION_STYLE="landscape"
-		DISPLAY_VALUE="\$(echo \${DISPLAY} | cut -d : -f 2)"
+		DISPLAY_VALUE="\$(cut -d : -f 2 <<< "\${DISPLAY}")"
 
 		# Process command line args
-		for option in "\$@"; do
+		for option in "\${@}"; do
 		    case "\$option" in
 		        "--potrait")
 		            ORIENTATION_STYLE=potrait
@@ -381,7 +388,7 @@ _CREATE_VNC_LAUNCHER() {
 		    esac
 		done
 
-		if [ -f "/usr/bin/vncserver" ]; then
+		if [ -x "\$(command -v vncserver)" ]; then
 		    _CHECK_USER && _CLEAN_TMP_DIR && _SET_GEOMETRY && _START_SERVER
 		else
 		    echo ">> No VNC server installed"
@@ -392,7 +399,7 @@ _CREATE_VNC_LAUNCHER() {
 
 # Deletes downloaded files
 _CLEANUP_DOWNLOADS() {
-	if [ -z "${KEEP_ROOTFS_DIR}" ] && [ -z "${KEEP_ROOTFS_MAGE}" ] && [ -f "${ARCHIVE_NAME}" ]; then
+	if [ -z "${KEEP_ROOTFS_DIRECTORY}" ] && [ -z "${KEEP_ROOTFS_MAGE}" ] && [ -f "${ARCHIVE_NAME}" ]; then
 		if _ASK "Remove downloaded rootfs archive to save space" "N"; then
 			_PRINT_MESSAGE "Removing downloaded rootfs archive" E
 			rm -f "${ARCHIVE_NAME}" && _PRINT_MESSAGE "Downloaded rootfs archive removed" || _PRINT_MESSAGE "Failed to remove downloaded rootfs archive" E
@@ -404,20 +411,22 @@ _CLEANUP_DOWNLOADS() {
 
 # Prints usage instructions
 _PRINT_COMPLETE_MSG() {
-	_PRINT_TITLE "Ubuntu installed successfully" S
-	_PRINT_MESSAGE "Run command '${Y}ubuntu${C}' to start Ubuntu" N
-	_PRINT_MESSAGE "Run command '${Y}vnc${C}' in Ubuntu to start the VNC Server" N
+	_PRINT_TITLE "${DISTRO_NAME} installed successfully" S
+	_PRINT_MESSAGE "Run command '${Y}ubuntu${C}' or '${Y}ub${C}' to start ${DISTRO_NAME}" N
+	_PRINT_MESSAGE "Run command '${Y}vnc${C}' in ${DISTRO_NAME} to start the VNC Server" N
 	_PRINT_TITLE "Login Information"
-	_PRINT_MESSAGE "User/Login  ${Y}root${G}"
-	_PRINT_MESSAGE "Password    ${Y}${ROOT_PASSWD}${N}${G}"
+	_PRINT_MESSAGE "Login as super user" N
+	_PRINT_MESSAGE "User/Login  '${Y}root${G}'"
+	_PRINT_MESSAGE "Password    '${Y}${ROOT_PASSWD}${G}'"
 	_PRINT_TITLE "Documentation  ${U}${AUTHOR_GITHUB}/${SCRIPT_REPOSITORY}${NU}"
-	_PRINT_TITLE "This is a minimal installation of Ubuntu" E
+	# Message for minimal installation
+	_PRINT_TITLE "This is a minimal installation of ${DISTRO_NAME}" E
 	_PRINT_MESSAGE "Read the documentation on how to install additional components" E
 }
 
 # Prints script version
 _PRINT_VERSION() {
-	_PRINT_TITLE "Ubuntu Installer, version ${SCRIPT_VERSION}"
+	_PRINT_TITLE "${DISTRO_NAME} Installer, version ${SCRIPT_VERSION}"
 	_PRINT_MESSAGE "Copyright (C) 2023 ${AUTHOR_NAME} <${U}${AUTHOR_GITHUB}${NU}>"
 	_PRINT_MESSAGE "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>"
 	_PRINT_MESSAGE "This is free software; you are free to change and redistribute it"
@@ -426,8 +435,8 @@ _PRINT_VERSION() {
 
 # Prints script usage
 _PRINT_USAGE() {
-	_PRINT_TITLE "Usage  $(basename "$0") [option${C}]... [DIRECTORY]"
-	_PRINT_MESSAGE "Install Ubuntu in DIRECTORY (default HOME/${DEFAULT_ROOTFS_DIR})"
+	_PRINT_TITLE "Usage: $(basename "${0}") [option${C}]... [DIRECTORY]"
+	_PRINT_MESSAGE "Install ${DISTRO_NAME} in DIRECTORY (default HOME/ubuntu-<arch>)"
 	_PRINT_TITLE "Options"
 	_PRINT_MESSAGE "-h, --help"
 	_PRINT_MESSAGE "        Print this message and exit"
@@ -445,19 +454,20 @@ _PRINT_USAGE() {
 # Sets TMP_LOGIN_COMMAND
 _FIX_ISSUES() {
 	_PRINT_TITLE "Installation complete" S
-	_PRINT_MESSAGE "Making some tweaks" N
+	_PRINT_MESSAGE "Making some configurations" N
 	local bug_descriptions=(
-		"Configuring sudo and su"
-		"Setting display values"
-		"Settting host information"
-		"Settting pulse audio server"
-		"Setting java variables"
-		"Setting DNS information"
-		"Fixing start error message"
+		"Configuring root settings"
+		"Configuring display settings"
+		"Configuring host settings"
+		"Configuring audio settings"
+		"Configuring internet settings"
+		"Configuring java settings"
+		"Configuring profile settings"
 	)
-	unset LD_PRELOAD && TMP_LOGIN_COMMAND="proot --link2symlink --root-id --rootfs=${ROOTFS_DIR} --cwd=/"
+	# command for logging in
+	unset LD_PRELOAD && TMP_LOGIN_COMMAND="proot --link2symlink --root-id --rootfs=${ROOTFS_DIRECTORY} --cwd=/"
 	local descr_num=0
-	for issue in _FIX_SUDO _FIX_DISPLAY _FIX_HOSTS _FIX_AUDIO _FIX_JDK _FIX_DNS _FIX_ERROR_MSG; do
+	for issue in _FIX_SUDO _FIX_DISPLAY _FIX_HOSTS _FIX_AUDIO _FIX_DNS _FIX_JDK _FIX_ERROR_MSG; do
 		_PRINT_MESSAGE "${bug_descriptions[${descr_num}]}" N
 		if "${issue}" &>/dev/null; then
 			_PRINT_MESSAGE "Sucess"
@@ -466,29 +476,31 @@ _FIX_ISSUES() {
 		fi
 		((descr_num++))
 	done
-	_PRINT_TITLE "Setting a root password"
-	if _FIX_ROOT_PASSWD &>/dev/null; then
-		_PRINT_MESSAGE "Root password set successfully"
+	_PRINT_MESSAGE "Setting a root password" N
+	if _SET_ROOT_PASSWD &>/dev/null; then
+		_PRINT_MESSAGE "Sucess"
 	else
-		_PRINT_ERROR_EXIT "Failed to set root password" 0
+		_PRINT_ERROR_EXIT "Failed" 0
 	fi
 }
 
 # Fixes sudo and su on start
 _FIX_SUDO() {
-	local bin_dir="${ROOTFS_DIR}/usr/bin"
-	if [ -f "${bin_dir}/su" ]; then
-		chmod +s "${bin_dir}/su"
-	fi
-	if [ -f "${bin_dir}/sudo" ]; then
+	local bin_dir="${ROOTFS_DIRECTORY}/usr/bin"
+	if [ -x "${bin_dir}/sudo" ]; then
 		chmod +s "${bin_dir}/sudo"
-		echo "Set disable_coredump false" >"${ROOTFS_DIR}/etc/sudo.conf"
+		echo "Set disable_coredump false" >"${ROOTFS_DIRECTORY}/etc/sudo.conf"
+	fi
+	if [ -x "${bin_dir}/su" ]; then
+		chmod +s "${bin_dir}/su"
+	else
+		return 1
 	fi
 }
 
-# Sets display for Ubuntu
+# Sets display
 _FIX_DISPLAY() {
-	cat >"${ROOTFS_DIR}/etc/profile.d/display.sh" <<-EOF
+	mkdir -p "${ROOTFS_DIRECTORY}/etc/profile.d/" && cat >"${ROOTFS_DIRECTORY}/etc/profile.d/display.sh" <<-EOF
 		if [ "\${USER}" = "root" ] || [ "\$EUID" -eq 0 ] || [ "\$(whoami)" = "root" ]; then
 		    export DISPLAY=:0
 		else
@@ -499,27 +511,34 @@ _FIX_DISPLAY() {
 
 # Sets host information
 _FIX_HOSTS() {
-	echo "ubuntu" >"${ROOTFS_DIR}/etc/hostname"
-	cat >"${ROOTFS_DIR}/etc/hosts" <<-EOF
+	echo "ubuntu" >"${ROOTFS_DIRECTORY}/etc/hostname" && cat >"${ROOTFS_DIRECTORY}/etc/hosts" <<-EOF
 		127.0.0.1       localhost
 		127.0.1.1       ubuntu
 	EOF
 }
 
-# Sets the pulse audio server
+# Sets pulse audio server
 _FIX_AUDIO() {
-	echo "export PULSE_SERVER=127.0.0.1" >"${ROOTFS_DIR}/etc/profile.d/pulseserver.sh"
+	mkdir -p "${ROOTFS_DIRECTORY}/etc/profile.d/" && echo "export PULSE_SERVER=127.0.0.1" >"${ROOTFS_DIRECTORY}/etc/profile.d/pulseserver.sh"
+}
+
+# Sets dns settings
+_FIX_DNS() {
+	mkdir -p "${ROOTFS_DIRECTORY}/etc/" && cat >"${ROOTFS_DIRECTORY}/etc/resolv.conf" <<-EOF
+		nameserver 8.8.8.8
+		nameserver 8.8.4.4
+	EOF
 }
 
 # Sets java variables
 _FIX_JDK() {
 	if [[ "${SYS_ARCH}" == "armhf" ]]; then
-		cat >"${ROOTFS_DIR}/etc/profile.d/java.sh" <<-EOF
+		mkdir -p "${ROOTFS_DIRECTORY}/etc/profile.d/" && cat >"${ROOTFS_DIRECTORY}/etc/profile.d/java.sh" <<-EOF
 			export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-armhf/
 			export PATH=\$JAVA_HOME/bin:\$PATH
 		EOF
 	elif [[ "${SYS_ARCH}" == "arm64" ]]; then
-		cat >"${ROOTFS_DIR}/etc/profile.d/java.sh" <<-EOF
+		mkdir -p "${ROOTFS_DIRECTORY}/etc/profile.d/" && cat >"${ROOTFS_DIRECTORY}/etc/profile.d/java.sh" <<-EOF
 			export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-aarch64/
 			export PATH=\$JAVA_HOME/bin:\$PATH
 		EOF
@@ -528,22 +547,14 @@ _FIX_JDK() {
 	fi
 }
 
-# Sets dns settings
-_FIX_DNS() {
-	cat >"${ROOTFS_DIR}/etc/resolv.conf" <<-EOF
-		nameserver 8.8.8.8
-		nameserver 8.8.4.4
-	EOF
-}
-
 # Removes error message on start
 _FIX_ERROR_MSG() {
-	sed -i '/^# sudo hint/,/^fi/s/^/# /' "${ROOTFS_DIR}/etc/bash.bashrc"
+	sed -i '/^# sudo hint/,/^fi/s/^/# /' "${ROOTFS_DIRECTORY}/etc/bash.bashrc"
 }
 
 # Sets a passwd for root user
-_FIX_ROOT_PASSWD() {
-	if [ -f "${ROOTFS_DIR}/usr/bin/passwd" ]; then
+_SET_ROOT_PASSWD() {
+	if [ -f "${ROOTFS_DIRECTORY}/usr/bin/passwd" ]; then
 		${TMP_LOGIN_COMMAND} "usr/bin/passwd" root <<-EOF
 			${ROOT_PASSWD}
 			${ROOT_PASSWD}
@@ -560,49 +571,54 @@ _FIX_ROOT_PASSWD() {
 # Prints title
 _PRINT_TITLE() {
 	local color="${C}"
-	local prefix=">>"
+	local prefix=">> "
 	case "${2}" in
 		s | S)
 			color="${G}"
-			# prefix=" "
+			# prefix=""
 			;;
 		e | E)
 			color="${R}"
-			# prefix=" "
+			# prefix=""
 			;;
 	esac
-	printf "\n${color}${prefix} ${1}.${N}\n"
+	printf "\n${color}${prefix}${1}.${N}\n"
 }
 
 # Prints message
 _PRINT_MESSAGE() {
 	local color="${G}"
-	local prefix=" "
+	local prefix="   "
 	case "${2}" in
 		n | N)
 			color="${C}"
-			# prefix=" "
+			# prefix=""
 			;;
 		e | E)
 			color="${R}"
-			# prefix=" "
+			# prefix=""
+			;;
+		r | R)
+			printf "${C}${prefix}${1}: ${N}"
+			return
 			;;
 	esac
-	printf "${color} ${prefix} ${1}.${N}\n"
+	printf "${color}${prefix}${1}.${N}\n"
 }
 
 # Prints error message and exits
 _PRINT_ERROR_EXIT() {
 	local color="${R}"
-	local prefix=" "
+	local prefix="   "
 	if [ -n "${2}" ]; then
 		local suggested_messages=(
 			" Try running this script again."
 			" Internet connection required."
+			" Try '-h' or '--help' for usage."
 		)
 		local message="${suggested_messages[${2}]}"
 	fi
-	printf "${color} ${prefix} ${1}.${message}${N}\n"
+	printf "${color}${prefix}${1}.${message}${N}\n"
 	exit 1
 }
 
@@ -620,27 +636,27 @@ _ASK() {
 		local prompt="y/n"
 		local default=""
 	fi
-	# printf "\n"
+	# echo
 	local retries=3
 	while true; do
 		if [ ${retries} -ne 3 ]; then
-			prefix="${retries}"
+			prefix="${R}${retries}${N}${color}"
 		fi
-		printf "\r${color} ${prefix} ${1}? ${prompt} ${N}"
-		read -rn 1 reply
+		printf "\r${color} ${prefix} ${1}? (${prompt}) ${N}"
+		read -ren 1 reply
 		if [ -z "${reply}" ]; then
 			reply="${default}"
 		fi
 		case "${reply}" in
-			Y | y) printf "\n" && return 0 ;;
-			N | n) printf "\n" && return 1 ;;
+			Y | y) echo && return 0 ;;
+			N | n) echo && return 1 ;;
 		esac
 		# Return default value 3rd time
 		((retries--))
 		if [ -n "${default}" ] && [ ${retries} -eq 0 ]; then # && [[ ${default} =~ ^(Y|N|y|n)$ ]]; then
 			case "${default}" in
-				y | Y) printf "\n" && return 0 ;;
-				n | N) printf "\n" && return 1 ;;
+				y | Y) echo && return 0 ;;
+				n | N) echo && return 1 ;;
 			esac
 		fi
 	done
@@ -649,33 +665,36 @@ _ASK() {
 ################################################################################
 #                                ENTRY POINT                                   #
 ################################################################################
-
 # Author info
 AUTHOR_NAME="Jore"
 AUTHOR_GITHUB="https://github.com/jorexdeveloper"
 
 # Script info
-SCRIPT_REPOSITORY="Install-Ubuntu-Termux"
 SCRIPT_VERSION="1.0"
+SCRIPT_REPOSITORY="termux-ubuntu"
 
 # Static info
+ROOT_PASSWD="root"
+CODE_NAME="kinetic"
+DISTRO_NAME="Ubuntu"
 TERMUX_FILES_DIR="/data/data/com.termux/files"
-DEFAULT_ROOTFS_DIR="ubuntufs"
+BASE_URL="https://partner-images.canonical.com/core/${CODE_NAME}/current"
 
+# Color supported terminals
 case "${TERM}" in
-	xterm-color | *-256color)
+	*color*)
 		R="\e[1;31m"
-		G="\e[32m"
-		Y="\e[33m"
-		C="\e[36m"
-		U="\e[4m"
+		G="\e[1;32m"
+		Y="\e[1;33m"
+		C="\e[1;36m"
+		U="\e[1;4m"
 		NU="\e[24m"
 		N="\e[0m"
 		;;
 esac
 
 # Proces command line args
-for option in "$@"; do
+for option in "${@}"; do
 	case "${option}" in
 		"-v" | "--version")
 			_PRINT_VERSION
@@ -688,30 +707,28 @@ for option in "$@"; do
 	esac
 done
 
-# Customizable info
-ROOT_PASSWD="root"
-CODE_NAME="kinetic"
-BASE_URL="https://partner-images.canonical.com/core/${CODE_NAME}/current"
-
-# Print banner
+# Begin
 _PRINT_BANNER
-
-# Check for support
 _CHECK_ARCHITECTURE
 _CHECK_DEPENDENCIES
 
-# Set download file names
+# Arch dependent variables
+DEFAULT_ROOTFS_DIRECTORY="ubuntu-${SYS_ARCH}"
 ARCHIVE_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}-root.tar.gz"
 # MANIFEST_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}.manifest"
 
-# Set installation directory, but it must be within Termux to prevent file permission issues
-if [ -n "${1}" ] && ROOTFS_DIR="$(realpath "${1}")" && [[ "${ROOTFS_DIR}" == "${TERMUX_FILES_DIR}"* ]]; then
+# Set installation directory (must be within Termux to prevent permission issues)
+if [ -n "${1}" ] && ROOTFS_DIRECTORY="$(realpath "${1}")" && [[ "${ROOTFS_DIRECTORY}" == "${TERMUX_FILES_DIR}"* ]]; then
 	test
 else
-	ROOTFS_DIR="$(realpath "${TERMUX_FILES_DIR}/home/${DEFAULT_ROOTFS_DIR}")"
+	if [ -n "${1}" ]; then
+		_PRINT_ERROR_EXIT "Directory '${1}' is not within ${TERMUX_FILES_DIR}" 2
+	fi
+	ROOTFS_DIRECTORY="$(realpath "${TERMUX_FILES_DIR}/home/${DEFAULT_ROOTFS_DIRECTORY}")"
 fi
 
-_PRINT_TITLE "Installing Ubuntu in ${ROOTFS_DIR}"
+# Comfirm Installation directory
+_PRINT_TITLE "Installing ${DISTRO_NAME} in ${ROOTFS_DIRECTORY}"
 
 # Installation
 _CHECK_ROOTFS_DIRECTORY
@@ -727,3 +744,6 @@ _FIX_ISSUES
 
 # Print help info
 _PRINT_COMPLETE_MSG
+
+# Exit successfully
+exit
