@@ -205,8 +205,8 @@ verify_rootfs_archive() {
 		msg -t "Verifying the integrity of the rootfs archive."
 		local trusted_shasums="$(
 			cat <<-EOF
-				8deb8c185e66c0a7aea45ffa70000d609b0269e23a7af8433398486edfa81910 *ubuntu-kinetic-core-cloudimg-armhf-root.tar.gz
-				a851c717d90610d3e9528c35a26fdc40a7111c069d7a923ab094c6fcf0b7b5f6 *ubuntu-kinetic-core-cloudimg-arm64-root.tar.gz
+				35403425bea2fd18c36843376830d583c85060bc1ec3fdb8dcb842797a186c85 *ubuntu-jammy-core-cloudimg-armhf-root.tar.gz
+				7db67849df74ac98700ea6d83b591e740b7e4af177f2a3b3794773969e48642e *ubuntu-jammy-core-cloudimg-arm64-root.tar.gz
 			EOF
 		)"
 		if grep --regexp="${ARCHIVE_NAME}$" <<<"${trusted_shasums}" | sha256sum --quiet --check &>>"${LOG_FILE}"; then
