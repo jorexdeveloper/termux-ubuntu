@@ -253,7 +253,7 @@ create_rootfs_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     ${DISTRO_NAME} launcher, version ${VERSION}                                         #
+		#     ${DISTRO_NAME} launcher, version ${VERSION}                                        #
 		#                                                                              #
 		#     Launches ${DISTRO_NAME}.                                                         #
 		#                                                                              #
@@ -617,7 +617,7 @@ create_vnc_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     VNC launcher, version ${VERSION}                                            #
+		#     VNC launcher, version ${VERSION}                                           #
 		#                                                                              #
 		#     This script starts the VNC server.                                       #
 		#                                                                              #
