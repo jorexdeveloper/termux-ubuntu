@@ -27,7 +27,8 @@ AUTHOR="Jore"
 GITHUB="https://github.com/jorexdeveloper"
 PROGRAM_NAME="install-ubuntu"
 REPOSITORY="termux-ubuntu"
-VERSION="20230630"
+CODE_NAME="jammy"
+VERSION="20230626"
 
 ################################################################################
 # Prevents running this program as root to prevent harm to system directories  #
@@ -53,7 +54,7 @@ print_logo() {
 	msg -a "${spaces}│${G}| | | ||  _ \ | | | ||  \| |  | |  | | | |${C}│"
 	msg -a "${spaces}│${G}| |_| || |_) || |_| || |\  |  | |  | |_| |${C}│"
 	msg -a "${spaces}│${G} \___/ |____/  \___/ |_| \_|  |_|   \___/ ${C}│"
-	msg -a "${spaces}│${Y}                 ${VERSION}                 ${C}│"
+	msg -a "${spaces}│${Y}              ${CODE_NAME}-${VERSION}              ${C}│"
 	msg -a "${spaces}└──────────────────────────────────────────┘"
 	msg -a "${spaces}                Author: ${AUTHOR}"
 	msg -a "${spaces} Github: ${U}${GITHUB}${L}/"
@@ -253,7 +254,7 @@ create_rootfs_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     ${DISTRO_NAME} launcher, version ${VERSION}                                        #
+		#     ${DISTRO_NAME} launcher, version ${CODE_NAME}-${VERSION}                                  #
 		#                                                                              #
 		#     Launches ${DISTRO_NAME}.                                                         #
 		#                                                                              #
@@ -617,7 +618,7 @@ create_vnc_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     VNC launcher, version ${VERSION}                                           #
+		#     VNC launcher, version ${CODE_NAME}-${VERSION}                                     #
 		#                                                                              #
 		#     This script starts the VNC server.                                       #
 		#                                                                              #
@@ -835,7 +836,7 @@ uninstall_rootfs() {
 # Prints the program version information                                       #
 ################################################################################
 print_version() {
-	msg -a "${DISTRO_NAME} installer, version ${VERSION}."
+	msg -a "${DISTRO_NAME} installer, version ${CODE_NAME}-${VERSION}."
 	msg -a "Copyright (C) 2023 ${AUTHOR} <${U}${GITHUB}${L}>."
 	msg -a "License GPLv3+: GNU GPL version 3 or later <${U}http://gnu.org/licenses/gpl.html${L}>."
 	msg -aN "This is free software, you are free to change and redistribute it."
@@ -1500,7 +1501,6 @@ ask() {
 
 # Name of the distro
 DISTRO_NAME="Ubuntu"
-CODE_NAME="kinetic"
 
 # Termux directory
 TERMUX_FILES_DIR="/data/data/com.termux/files"
