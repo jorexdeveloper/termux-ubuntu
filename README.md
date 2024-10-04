@@ -10,7 +10,7 @@ Install Ubuntu in Termux.
 
 > Author: Jore
 
-> Version: 20230630
+> Version: jammy-20230626
 
 <details>
 <summary>CONTENTS</summary>
