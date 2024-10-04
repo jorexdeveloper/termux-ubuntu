@@ -1,90 +1,177 @@
-# Install Ubuntu in Termux
+# TERMUX UBUNTU
 
-Script to install Ubuntu in Termux.
+<div style="width:100%;background-color:black;border:3px solid black;border-radius:6px;margin:5px 0;padding:2px 5px">
+  <img src="./logo.jpeg"
+    alt="image could not be loaded"
+    style="color:red;background-color:black;font-weight:bold"/>
+</div>
 
-## Contents
+Install Ubuntu in Termux.
 
-- [Contents](#contents)
-- [Features](#features)
-- [Installation](#installation)
-- [How to Login](#how-to-login)
-  - [Login Information](#login-information)
-- [How to Start a VNC Server](#how-to-start-a-vnc-server)
-  - [How to Connect to the VNC Server](#how-to-connect-to-the-vnc-server)
-- [How to Install a Desktop Environment](#how-to-install-a-desktop-environment)
-- [How to Uninstall Ubuntu](#how-to-uninstall-ubuntu)
-- [Bugs](#bugs)
-- [License](#license)
+> Author: Jore
 
-## Features
+> Version: 20230630
 
- - Interactive Installation.
- - Color output (if supported).
- - Shows progress during extraction.
- - Install Ubuntu in custom directory.
- - Automatic configuration (i.e set root password).
- - Other optimizations and improvements.
+<details>
+<summary>CONTENTS</summary>
 
-## Installation
+- [FEATURES](#features "List of available features.")
+- [INSTALLATION](#installation "Steps for installation.")
+- [COMMAND LINE OPTIONS](#command-line-options "Available command line options.")
+- [HOW TO LOGIN](#how-to-login "Steps on how to login.")
+  - [LOGIN INFORMATION](#login-information "User name and password for logging in.")
+- [HOW TO START THE VNC SERVER](#how-to-start-the-vnc-server "Steps on how to start the VNC server.")
+  - [REQUIREMENTS](#requirements "Requirements for starting the VNC server.")
+  - [PROCEDURE](#procedure "Procedure for starting the VNC server.")
+- [HOW TO INSTALL XFCE AND VNC SERVER](#how-to-install-xfce-and-vnc-server "Steps on how to install a Desktop Environment and a VNC server.")
+- [USING AS ROOT](#using-as-root "Installing Ubuntu as root")
+- [HOW TO UNINSTALL UBUNTU](#how-to-uninstall-ubuntu "Steps on how to uninstall Ubuntu.")
+- [BUGS](#bugs "Bug information")
+- [LICENSE](#license "Program license.")
 
-Download and execute the installer script (**install-ubuntu.sh**) or copy and paste below commands in **Termux**.
+</details>
 
+## FEATURES
+
+- Anti-root fuse.
+- Interactive Installation.
+- Color output. (if supported)
+- Command line options. (see [here](#command-line-options "Available command line options."))
+  - Install in custom directory.
+  - Install only i.e no configurations. (**use with caution**)
+  - Configurations only (**if already installed**)
+  - Modify color output.
+  - Uninstall.
+- Creates a VNC wrapper (see [here](#how-to-start-the-vnc-server "Steps on how to start the VNC server."))
+- Automatic configurations. (i.e binding necessary directories)
+- Access System and Termux commands. (i.e termux-api commands)
+- Customize default shell and zone information before startup.
+- Other optimizations and improvements.
+
+## INSTALLATION
+
+1.  Update installed packages by executing the following commands.
+
+```bash
+pkg update && pkg upgrade
 ```
-apt-get update -y && apt-get install wget -y && wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh && bash install-ubuntu.sh
+
+2.  Install `wget`. (`curl` is an alternative)
+
+```bash
+pkg install wget
 ```
 
-The program also displays help information with option `-h` or `--help` to guide you further.
+3.  Download the installer script. (**install-ubuntu.sh**)
 
-## How to Login
+```bash
+wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh
+```
+
+4.  Now execute the installer script.
+
+```bash
+bash install-ubuntu.sh --help
+```
+
+If you are lazy like me, just copy and paste the below commands in Termux.
+
+```bash
+pkg update -y && pkg upgrade -y && pkg install -y wget && wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh && bash install-ubuntu.sh --help
+```
+
+## COMMAND LINE OPTIONS
+
+Execute the installer script with `--help` to see available command line options.
+
+```bash
+bash install-ubuntu.sh --help
+```
+
+## HOW TO LOGIN
 
 After successful installation, run command `ub` or `ubuntu` to start Ubuntu.
 
-### Login Information
+### LOGIN INFORMATION
 
-| User/Login         | Password |
-|--------------------|----------|
+| Login              | Password |
+| ------------------ | -------- |
 | root (super user)  | **root** |
 
-## How to Start a VNC Server
+## HOW TO START THE VNC SERVER
 
-Start Ubuntu and run command `vnc` to start the VNC server. The server will be started at localhost (`127.0.0.1`).
+#### REQUIREMENTS:
 
-The program also displays help information with option `-h` or `--help` to guide you further.
+1.  Make sure you have a **VNC server** and **Desktop environment** installed. (See [here](#how-to-install-xfce-and-vnc-server "Steps on how to start the VNC server."))
 
-#### Note: The **VNC server** and **Desktop Environment** may not be pre-installed. You can install them as shown [below](#how-to-install-a-desktop-environment).
+2.  Install [NetHunter KeX](https://store.nethunter.com/en/packages "Kali NetHunter Store"), or a **VNC viewer** of your choice.
 
-### How to Connect to the VNC Server
+#### PROCEDURE:
 
-After starting the VNC server, install [NetHunter KeX](https://store.nethunter.com/en/packages/com.offsec.nethunter.kex/), or a **VNC viewer** of your choice and login with below information. (Use current user name and **VNC password** which is set on first run of `vnc`)
+1.  [Login in Ubuntu](#how-to-login "Steps on how to login.") and run command `vnc` to start the VNC server. The server will be started at **localhost** (`127.0.0.1`).
 
-| User  | Display  | Port | Address     |
-|-------|----------|------|-------------|
-| root  | :0       | 5900 | localhost:0 |
-| other | :1       | 5901 | localhost:1 |
+> **Tip:** The program also displays help information with option `-h` or `--help` to guide you further.
 
-## How to Install a Desktop Environment
+2.  On the first run, you will be prompted for a password. You will use this password to login and connect to the VNC server.
 
-Copy and paste below commands in **Ubuntu**. The commands below **need to be run as root**.
+3.  Now open NetHunter KeX and login with the password in step 2.
 
+| User  | Display | Port | Address     |
+| ----- | ------- | ---- | ----------- |
+| Root  | :0      | 5900 | localhost:0 |
+| Other | :1      | 5901 | localhost:1 |
+
+## HOW TO INSTALL XFCE AND VNC SERVER
+
+1.  [Login in Ubuntu](#how-to-login "Steps on how to login.").
+
+2.  Make a full upgrade of your system.
+
+```bash
+sudo apt update && sudo apt full-upgrade
 ```
-apt update && apt full-upgrade && unminimize <<<"y" && apt install man sudo dbus-x11 tigervnc-standalone-server ubuntu-desktop-minimal
+
+3.  Run the following commands.
+
+```bash
+sudo apt install dbus-x11 tigervnc-standalone-server ubuntu-desktop-xfce
 ```
 
-## How to Uninstall Ubuntu
+> **Tip:** This will take a while, just make sure you don't exit Termux during the installation or you might run into some problems later.
 
-To uninstall Ubuntu, copy and paste below commands in **Termux**. (replace `$HOME/ubuntu-{armhf,arm64}` with the directory where you installed the rootfs if custom directory was specified)
+## USING AS ROOT
 
+**Installing/Running Ubuntu as root** can have unintended effects, and should only be done when you are sure of what's happening in the background (how linux works) or you might **damage your device**, even worse **bricking it**.
+
+For that reason, I have added an **anti root fuse** and disabling it will require you to comment out the appropriate lines from the installer script.
+
+**NOTE: You can still have root privileges within Ubuntu provided by `proot`, even without installing as root. (see the proot manual pages)**
+
+You will have to search and comment out the function call to `check_root` in the installer script. i.e
+
+```bash
+  ...
+  # check_root
+  ...
 ```
-rm -rI $PREFIX/bin/ub $PREFIX/bin/ubuntu $HOME/ubuntu-{armhf,arm64}
+
+## HOW TO UNINSTALL UBUNTU
+
+To uninstall Ubuntu, run the installer script (**install-ubuntu.sh**) with option `--uninstall`.
+
+**NOTE:** If you installed Ubuntu in a custom directory, also supply the path to the directory as an argument.
+
+```bash
+bash install-ubuntu.sh --uninstall
 ```
 
-## Bugs
+## BUGS
 
-Currently, there aren't any bugs **that i know about** but please let me know in the [issues section][i0] if you find any or for improvement suggestions.
+All currently known bugs are fixed. Please let me know in the [issues section](https://github.com/jorexdeveloper/termux-ubuntu/issues "The issues section.") if you find any.
 
-## License
+## LICENSE
 
-```
+```txt
     Copyright (C) 2023  Jore
 
     This program is free software: you can redistribute it and/or modify
@@ -100,5 +187,3 @@ Currently, there aren't any bugs **that i know about** but please let me know in
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
-
-[i0]: https://github.com/jorexdeveloper/termux-ubuntu/issues
