@@ -23,7 +23,7 @@ Install Ubuntu in Termux.
 - [HOW TO START THE VNC SERVER](#how-to-start-the-vnc-server "Steps on how to start the VNC server.")
   - [REQUIREMENTS](#requirements "Requirements for starting the VNC server.")
   - [PROCEDURE](#procedure "Procedure for starting the VNC server.")
-- [HOW TO INSTALL XFCE AND VNC SERVER](#how-to-install-xfce-and-vnc-server "Steps on how to install a Desktop Environment and a VNC server.")
+- [HOW TO INSTALL DESKTOP AND VNC SERVER](#how-to-install-desktop-and-vnc-server "Steps on how to install a Desktop Environment and a VNC server.")
 - [USING AS ROOT](#using-as-root "Installing Ubuntu as root")
 - [HOW TO UNINSTALL UBUNTU](#how-to-uninstall-ubuntu "Steps on how to uninstall Ubuntu.")
 - [BUGS](#bugs "Bug information")
@@ -102,7 +102,7 @@ After successful installation, run command `ub` or `ubuntu` to start Ubuntu.
 
 #### REQUIREMENTS:
 
-1.  Make sure you have a **VNC server** and **Desktop environment** installed. (See [here](#how-to-install-xfce-and-vnc-server "Steps on how to start the VNC server."))
+1.  Make sure you have a **VNC server** and **Desktop environment** installed. (See [here](#how-to-install-desktop-and-vnc-server "Steps on how to start the VNC server."))
 
 2.  Install [NetHunter KeX](https://store.nethunter.com/en/packages "Kali NetHunter Store"), or a **VNC viewer** of your choice.
 
@@ -121,20 +121,43 @@ After successful installation, run command `ub` or `ubuntu` to start Ubuntu.
 | Root  | :0      | 5900 | localhost:0 |
 | Other | :1      | 5901 | localhost:1 |
 
-## HOW TO INSTALL XFCE AND VNC SERVER
+## HOW TO INSTALL DESKTOP AND VNC SERVER
 
-1.  [Login in Ubuntu](#how-to-login "Steps on how to login.").
+1.  [Login in Ubuntu as root](#how-to-login "Steps on how to login.").
 
 2.  Make a full upgrade of your system.
 
 ```bash
-sudo apt update && sudo apt full-upgrade
+apt update && apt full-upgrade
 ```
 
-3.  Run the following commands.
+3.  Install `sudo`
 
 ```bash
-sudo apt install dbus-x11 tigervnc-standalone-server ubuntu-desktop-xfce
+apt install sudo
+```
+
+4.  Unminimize the file system.
+
+```bash
+sudo unminimize <<<"y"
+```
+
+5. Install desktop dependencies.
+
+ ```bash
+sudo apt install man sudo dbus-x11 tigervnc-standalone-server
+```
+
+6. Install desktop.
+
+```bash
+sudo apt install ubuntu-desktop-minimal
+```
+or
+
+```bash
+sudo apt install ubuntu-desktop-xfce
 ```
 
 > **Tip:** This will take a while, just make sure you don't exit Termux during the installation or you might run into some problems later.
@@ -150,9 +173,7 @@ For that reason, I have added an **anti root fuse** and disabling it will requir
 You will have to search and comment out the function call to `check_root` in the installer script. i.e
 
 ```bash
-  ...
   # check_root
-  ...
 ```
 
 ## HOW TO UNINSTALL UBUNTU
