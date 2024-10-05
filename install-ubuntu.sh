@@ -402,7 +402,7 @@ create_rootfs_launcher() {
 		        exit 0
 		        ;;
 		    -v | --version)
-		        echo "${DISTRO_NAME} launcher, version ${VERSION}."
+		        echo "${DISTRO_NAME} launcher, version ${CODE_NAME}-${VERSION}."
 		        echo "Copyright (C) 2023 ${AUTHOR} <${GITHUB}>."
 		        echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
 		        echo ""
