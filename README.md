@@ -152,7 +152,7 @@ sudo apt install man sudo dbus-x11 tigervnc-standalone-server
 6. Install desktop.
 
 ```bash
-sudo apt install ubuntu-desktop-minimal
+sudo apt install ubuntu-gnome-desktop gnome-core
 ```
 or
 
