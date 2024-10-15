@@ -815,6 +815,12 @@ uninstall_rootfs() {
 			msg -a "Uninstalling ${DISTRO_NAME}, please wait..."
 			if rm -rf "${ROOTFS_DIRECTORY}"; then
 				msg -as "${DISTRO_NAME} uninstalled successfully."
+				msg -a "Removing commands."
+				if rm -rf "${DISTRO_LAUNCHER}" "${DISTRO_SHORTCUT}"; then
+					msg -as "Commands removed successfully."
+				else
+					msg -ae "Failed to remove commnds."
+				fi
 			else
 				msg -aqm0 "Failed to uninstall ${DISTRO_NAME}."
 			fi
@@ -823,12 +829,6 @@ uninstall_rootfs() {
 		fi
 	else
 		msg -a "No rootfs found in '${ROOTFS_DIRECTORY}'."
-	fi
-	msg -a "Removing commands."
-	if rm -rf "${DISTRO_LAUNCHER}" "${DISTRO_SHORTCUT}"; then
-		msg -as "Commands removed successfully."
-	else
-		msg -ae "Failed to remove commnds."
 	fi
 }
 
@@ -844,7 +844,7 @@ print_version() {
 }
 
 ################################################################################
-# Prints the program version information                                       #
+# Prints the program usage information                                       #
 ################################################################################
 print_usage() {
 	msg -a "Usage: ${PROGRAM_NAME} [OPTION]... [DIR]"
