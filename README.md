@@ -1,4 +1,4 @@
-# TERMUX UBUNTU
+# <p align="center">TERMUX UBUNTU</p>
 
 <div style="width:100%;background-color:black;border:3px solid black;border-radius:6px;margin:5px 0;padding:2px 5px">
 <img src="./logo.jpg"
