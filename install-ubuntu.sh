@@ -669,7 +669,7 @@ create_vnc_launcher() {
 		            export USER="\${USER-root}"
 		            LD_PRELOAD="${LIB_GCC_PATH}"
 		            # nohup \\
-		            vncserver ":\${DISPLAY_VALUE}" -geometry "\${geometry}" -depth "\${DEPTH_VALUE}" -name remote-desktop "\${@}" && echo "VNC server started successfully."
+		            vncserver ":\${DISPLAY_VALUE}" -geometry "\${geometry}" -depth "\${DEPTH_VALUE}" "\${@}" && echo "VNC server started successfully."
 		        else
 		            set_passwd && start_server
 		        fi
@@ -679,8 +679,12 @@ create_vnc_launcher() {
 		}
 
 		kill_server() {
-		    vncserver -clean -kill ":\${DISPLAY_VALUE}" && clean_tmp
-		    return \${?}
+		    if [ -x "\$(command -v vncserver)" ]; then
+		        vncserver -clean -kill ":\${DISPLAY_VALUE}" && clean_tmp
+		        return \${?}
+		    else
+		        echo "No VNC server found."
+		    fi
 		}
 
 		print_usage() {
@@ -1118,7 +1122,7 @@ fake_proc_setup() {
 ################################################################################
 environment_variables_setup() {
 	local status=""
-	local profile_script="${ROOTFS_DIRECTORY}/etc/profile.d/set-vars.sh"
+	local profile_script="${ROOTFS_DIRECTORY}/etc/profile.d/setvars.sh"
 	mkdir -p "${ROOTFS_DIRECTORY}/etc/profile.d/"
 	cat /dev/null >"${profile_script}"
 	cat >>"${profile_script}" <<-EOF
@@ -1206,10 +1210,7 @@ settings_configurations() {
 	fi
 	status+="-${?}"
 	if [ -x "${ROOTFS_DIRECTORY}/usr/bin/passwd" ]; then
-		distro_exec "/usr/bin/passwd" root <<-EOF
-			${ROOT_PASSWORD}
-			${ROOT_PASSWORD}
-		EOF
+		distro_exec "/usr/bin/passwd" -d root
 	fi &>>"${LOG_FILE}"
 	status+="-${?}"
 	local dir="${ROOTFS_DIRECTORY}/usr/bin"

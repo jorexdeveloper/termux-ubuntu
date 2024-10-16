@@ -1,196 +1,250 @@
 # TERMUX UBUNTU
 
 <div style="width:100%;background-color:black;border:3px solid black;border-radius:6px;margin:5px 0;padding:2px 5px">
-  <img src="./logo.jpg"
+
+<img src="./logo.jpg"
     alt="image could not be loaded"
     style="color:red;background-color:black;font-weight:bold"/>
+
 </div>
 
-Install Ubuntu in Termux.
+Are you a linux fan or do you just love playing with the terminal and executing cool commands, just to look like a tech genius? Well, for whatever reason it is that you want to install linux on your phone, I got you covered.
 
-> Author: Jore
+Installing linux on your phone might not make you a hacker, but it will certainly make you look like one.
 
-> Version: jammy-20230626
+With this guide, you will be able to run a full linux system, including every linux command you can think of and install different pc software, all on your phone! Wait that's not all, you can run a desktop environment and enjoy the pc graphical interface and probably try to hack into NASA using your phone like the guy in that one movie.
+
+All you have to do is follow these simple installation instructions and you are a few keystrokes away from running all the cool programs created by the linux community.
 
 <details>
-<summary>CONTENTS</summary>
 
-- [FEATURES](#features "List of available features.")
-- [INSTALLATION](#installation "Steps for installation.")
-- [COMMAND LINE OPTIONS](#command-line-options "Available command line options.")
-- [HOW TO LOGIN](#how-to-login "Steps on how to login.")
-  - [LOGIN INFORMATION](#login-information "User name and password for logging in.")
-- [HOW TO START THE VNC SERVER](#how-to-start-the-vnc-server "Steps on how to start the VNC server.")
-  - [REQUIREMENTS](#requirements "Requirements for starting the VNC server.")
-  - [PROCEDURE](#procedure "Procedure for starting the VNC server.")
-- [HOW TO INSTALL DESKTOP AND VNC SERVER](#how-to-install-desktop-and-vnc-server "Steps on how to install a Desktop Environment and a VNC server.")
-- [USING AS ROOT](#using-as-root "Installing Ubuntu as root")
-- [HOW TO UNINSTALL UBUNTU](#how-to-uninstall-ubuntu "Steps on how to uninstall Ubuntu.")
-- [BUGS](#bugs "Bug information")
-- [LICENSE](#license "Program license.")
+<summary>Contents</summary>
+
+- [Installation](#installation "Installation process.")
+  - [How to install](#how-to-install "How to install.")
+- [Launch & set up](#launch--set-up "Launch and set up.")
+  - [How to launch](#how-to-launch "How to launch.")
+  - [How to install desktop and vnc server](#how-to-install-desktop-and-vnc-server "How to install desktop and vnc server.")
+- [Login](#login "Login process.")
+  - [How to start vnc server](#how-to-start-vnc-server "How to start vnc server.")
+  - [How to connect to vnc server](#how-to-connect-to-vnc-server "How to connect to vnc server.")
+- [Have fun](#have-fun "Congragulations!")
+- [Uninstallation](#uninstallation "Uninstallation process.")
+  - [How to uninstall](#how-to-uninstall "How to uninstall.")
+- [FAQ](#faq "Frequently asked questions.")
+- [License](#license "License")
 
 </details>
 
-## FEATURES
+## Installation
 
-- Anti-root fuse.
-- Interactive Installation.
-- Color output. (if supported)
-- Command line options. (see [here](#command-line-options "Available command line options."))
-  - Install in custom directory.
-  - Install only i.e no configurations. (**use with caution**)
-  - Configurations only (**if already installed**)
-  - Modify color output.
-  - Uninstall.
-- Creates a VNC wrapper (see [here](#how-to-start-the-vnc-server "Steps on how to start the VNC server."))
-- Automatic configurations. (i.e binding necessary directories)
-- Access System and Termux commands. (i.e termux-api commands)
-- Customize default shell and zone information before startup.
-- Other optimizations and improvements.
+### How to install
 
-## INSTALLATION
+Download and install the [termux app](https://fdroid.org/packages/com.termux "Download termux app") on your phone, then open it and execute the following commands.
 
-1.  Update installed packages by executing the following commands.
+1.  Upgrade termux packages
 
 ```bash
 pkg update && pkg upgrade
 ```
 
-2.  Install `wget`. (`curl` is an alternative)
+2.  Install `wget`
 
 ```bash
 pkg install wget
 ```
 
-3.  Download the installer script. (**install-ubuntu.sh**)
+3.  Download install script
 
 ```bash
 wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh
 ```
 
-4.  Now execute the installer script.
+4.  Execute install script
 
 ```bash
-bash install-ubuntu.sh --help
+bash install-ubuntu.sh
 ```
 
-If you are lazy like me, just copy and paste the below commands in Termux.
+> The install script displays usage information with the `--help` option.
+
+It's probably a good idea to inspect the install script from projects you don't yet know. You can do that by downloading the install script, looking through it so everything looks fine before running it.
+
+If you are lazy like me, you can just copy and paste the commands below in termux.
 
 ```bash
-pkg update -y && pkg upgrade -y && pkg install -y wget && wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh && bash install-ubuntu.sh --help
+pkg update -y && pkg upgrade -y && pkg install -y wget && wget -O install-ubuntu.sh https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh && bash install-ubuntu.sh
 ```
 
-## COMMAND LINE OPTIONS
+<details>
 
-Execute the installer script with `--help` to see available command line options.
+<summary>Features</summary>
+
+- anti-root-fuse
+- interactive installation
+- color output (if supported)
+- command line options
+  - install in custom directory
+  - install without configurations
+  - apply configurations only
+  - modify color output
+  - uninstall
+- creates vnc wrapper
+- automatic configurations
+- provides access to system and termux commands
+- customize default shell and zone information during installation
+- minor optimizations and tweaks
+
+</details>
+
+## Launch & set up
+
+After successful installation, we need to launch the system and make a few set ups.
+
+### How to launch
+
+Launch the system by executing the following commands.
 
 ```bash
-bash install-ubuntu.sh --help
+ubuntu root
 ```
 
-## HOW TO LOGIN
+or with a shorter version
 
-After successful installation, run command `ub` or `ubuntu` to start Ubuntu.
+```bash
+ub root
+```
 
-### LOGIN INFORMATION
+You shall be logged in as the root user. You can always login as another user by replacing **root** with their user name.
 
-| Login              | Password |
-| ------------------ | -------- |
-| root (super user)  | **root** |
+### How to install desktop and vnc server
 
-## HOW TO START THE VNC SERVER
+Now we need to install a desktop environment as it is not pre-installed and a vnc server which will be used for purposes of viewing and interacting with your desktop environment.
 
-#### REQUIREMENTS:
+[Launch](#how-to-launch "How to launch.") the system and execute the following commands.
 
-1.  Make sure you have a **VNC server** and **Desktop environment** installed. (See [here](#how-to-install-desktop-and-vnc-server "Steps on how to start the VNC server."))
-
-2.  Install [NetHunter KeX](https://store.nethunter.com/en/packages "Kali NetHunter Store"), or a **VNC viewer** of your choice.
-
-#### PROCEDURE:
-
-1.  [Login in Ubuntu](#how-to-login "Steps on how to login.") and run command `vnc` to start the VNC server. The server will be started at **localhost** (`127.0.0.1`).
-
-> **Tip:** The program also displays help information with option `-h` or `--help` to guide you further.
-
-2.  On the first run, you will be prompted for a password. You will use this password to login and connect to the VNC server.
-
-3.  Now open NetHunter KeX and login with the password in step 2.
-
-| User  | Display | Port | Address     |
-| ----- | ------- | ---- | ----------- |
-| Root  | :0      | 5900 | localhost:0 |
-| Other | :1      | 5901 | localhost:1 |
-
-## HOW TO INSTALL DESKTOP AND VNC SERVER
-
-1.  [Login in Ubuntu as root](#how-to-login "Steps on how to login.").
-
-2.  Make a full upgrade of your system.
+1.  Upgrade system packages
 
 ```bash
 apt update && apt full-upgrade
 ```
 
-3.  Install `sudo`
+2.  Unminimize system
 
 ```bash
-apt install sudo
+unminimize <<<"y"
 ```
 
-4.  Unminimize the file system.
+3.  Install vnc server
 
 ```bash
-sudo unminimize <<<"y"
+apt install tigervnc-standalone-server dbus-x11 sudo
 ```
 
-5. Install desktop dependencies.
-
- ```bash
-sudo apt install man sudo dbus-x11 tigervnc-standalone-server
-```
-
-6. Install desktop.
+4. Install desktop
 
 ```bash
-sudo apt install ubuntu-gnome-desktop gnome-core
+apt install ubuntu-desktop
 ```
-or
+
+This command will take a while to complete, just grab a coffee and keep termux open during the installation or you might run into some problems later.
+
+## Login
+
+Now all that's left is to login into the system and start playing around with some commands. To do that, we need to start a vnc server in our system and connect to it through a vnc viewer.
+
+### How to start vnc server
+
+[Launch](#how-to-launch "How to launch.") the system and execute the following commands.
 
 ```bash
-sudo apt install ubuntu-desktop-xfce
+vnc
 ```
 
-> **Tip:** This will take a while, just make sure you don't exit Termux during the installation or you might run into some problems later.
+> The vnc command displays usage information with the `--help` option.
 
-## USING AS ROOT
+On the first run of the above command, you will be prompted for a **vnc password**. This is the password that will be used to securely connect to the vnc server, in the vnc viewer.
 
-**Installing/Running Ubuntu as root** can have unintended effects, and should only be done when you are sure of what's happening in the background (how linux works) or you might **damage your device**, even worse **bricking it**.
+### How to connect to vnc server
 
-For that reason, I have added an **anti root fuse** and disabling it will require you to comment out the appropriate lines from the installer script.
+To connect to the vnc server, you will need to download and install a vnc viewer app of your choice. I recommend [AVNC](https://f-droid.org/packages/com.gaurav.avnc "Download AVNC app.") in this case.
 
-**NOTE: You can still have root privileges within Ubuntu provided by `proot`, even without installing as root. (see the proot manual pages)**
+Open the vnc viewer app, click add server and fill in with the following details.
 
-You will have to search and comment out the function call to `check_root` in the installer script. i.e
+**Name**
 
-```bash
-  # check_root
+```txt
+Ubuntu Desktop
 ```
 
-## HOW TO UNINSTALL UBUNTU
+**Host**
 
-To uninstall Ubuntu, run the installer script (**install-ubuntu.sh**) with option `--uninstall`.
+```txt
+localhost
+```
 
-**NOTE:** If you installed Ubuntu in a custom directory, also supply the path to the directory as an argument.
+**Port**
+
+The default port differs for the root user and other users and don't ask me why, I just got here.
+
+| user        | port |
+| ----------- | ---- |
+| user root   | 5900 |
+| other users | 5901 |
+
+**Password**
+
+Enter the **vnc password** from [above](#how-to-start-vnc-server "How to start vnc server.").
+
+## Have fun
+
+If you managed to get this far without any problems, congratulations! Linux now is installed on your phone and it's time to let you continue the exploration journey on your own.
+
+The possibilities are endless and the only limits that exist are the ones you set up for yourself.
+
+You might wan't to google for some cool commands and programs to execute or even when get you stuck, good luck.
+
+## Uninstallation
+
+If for some reason you need to uninstall the system from termux, just follow the steps below.
+
+### How to uninstall
+
+Simply execute the [install script](#how-to-install "How to install.") again in termux with option `--uninstall`.
 
 ```bash
 bash install-ubuntu.sh --uninstall
 ```
 
-## BUGS
+If you installed the system in a custom directory, supply the path to the installation directory as an additional argument.
 
-All currently known bugs are fixed. Please let me know in the [issues section](https://github.com/jorexdeveloper/termux-ubuntu/issues "The issues section.") if you find any.
+## FAQ
 
-## LICENSE
+If got some hickups during installation or have some questions, you are probably not the first one and here are the answers to some frequently asked questions.
+
+### What happens if termux has root access?
+
+This guide assumes that termux has no root access and the only root privileges that exist are those simulated in the installed system.
+
+However, if you have tried following the steps above with root access in termux, then you have probably not succeeded because installing and running the system with root access in termux can have unintended effects, and should only be done when you are sure of what you are doing or you might end up **damaging your device**.
+
+For that reason, I added an **anti-root-fuse** to the install script that prevents the installation process if termux has root access.
+
+There should not be a good enough reason to launch the system when termux has root access because harmless root privileges are still simulated in the system with help of proot.
+
+#### Work around
+
+If you **don't mind damaging your device** (probably making it unusable) and are **ready to get your hands dirty**, this section might resonate.
+
+Disabling the anti-root-fuse will require a deeper understanding of the install script and the installation process. You will need to edit the install script as follows:
+
+- Find and comment the function call to **check_root**.
+
+**This is definitely a bad idea and you are completely liable for any unintended effects of this action**.
+
+Just remember, I am mostly lazy and would never implement an anti-root-fuse for absolutely no reason.
+
+## License
 
 ```txt
     Copyright (C) 2023  Jore
