@@ -797,14 +797,13 @@ clean_up() {
 ################################################################################
 complete_msg() {
 	msg -st "${DISTRO_NAME} installed successfully."
-	msg "Run command '${Y}ubuntu${C}' or '${Y}ub${C}' to start ${DISTRO_NAME}."
-	msg "Run command '${Y}vnc${C}' in ${DISTRO_NAME} to start the VNC server."
-	msg -t "Login Information"
-	msg "Root user"
-	msg -l "Login    '${Y}root${G}'" "Password '${Y}${ROOT_PASSWORD}${G}'"
-	msg -t "Documentation  ${U}${GITHUB}/${REPOSITORY}${L}"
-	if ${ACTION_INSTALL}; then
-		msg -te "This is a minimal installation of ${DISTRO_NAME}."
+	msg "Launch ${DISTRO_NAME} by executing the commands below."
+	msg "'${Y}$(basename "${DISTRO_LAUNCHER}") root${C}' to login as root user."
+	msg "Use '${Y}$(basename "${DISTRO_SHORTCUT}")${C}' as a short form for '${Y}$(basename "${DISTRO_LAUNCHER}")${C}'"
+	msg -t "For more information, read the documentation at:"
+	msg "${U}${GITHUB}/${REPOSITORY}${L}"
+	if ${ACTION_INSTALL} && [ "${SELECTED_INSTALLATION}" != "full" ]; then
+		msg -te "This is a ${SELECTED_INSTALLATION} installation of ${DISTRO_NAME}."
 		msg "Read the documentation on how to install additional components."
 	fi
 }
@@ -1632,9 +1631,9 @@ msg -t "Using '${ROOTFS_DIRECTORY}' as rootfs directory."
 
 # Install actions
 if ${ACTION_INSTALL}; then
+	check_rootfs_directory
 	ARCHIVE_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}-root.tar.gz"
 	# MANIFEST_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}.manifest"
-	check_rootfs_directory
 	download_rootfs_archive
 	verify_rootfs_archive
 	extract_rootfs_archive

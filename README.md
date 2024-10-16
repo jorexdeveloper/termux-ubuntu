@@ -1,11 +1,9 @@
 # TERMUX UBUNTU
 
 <div style="width:100%;background-color:black;border:3px solid black;border-radius:6px;margin:5px 0;padding:2px 5px">
-
 <img src="./logo.jpg"
-    alt="image could not be loaded"
+    alt="Image could not be loaded."
     style="color:red;background-color:black;font-weight:bold"/>
-
 </div>
 
 Are you a linux fan or do you just love playing with the terminal and executing cool commands, just to look like a tech genius? Well, for whatever reason it is that you want to install linux on your phone, I got you covered.
@@ -14,10 +12,9 @@ Installing linux on your phone might not make you a hacker, but it will certainl
 
 With this guide, you will be able to run a full linux system, including every linux command you can think of and install different pc software, all on your phone! Wait that's not all, you can run a desktop environment and enjoy the pc graphical interface and probably try to hack into NASA using your phone like the guy in that one movie.
 
-All you have to do is follow these simple installation instructions and you are a few keystrokes away from running all the cool programs created by the linux community.
+Did I mention that you do not require root access to do all this? All you have to do is follow these simple installation instructions and you are a few keystrokes away from running all the cool programs created by the linux community.
 
 <details>
-
 <summary>Contents</summary>
 
 - [Installation](#installation "Installation process.")
@@ -80,7 +77,7 @@ pkg update -y && pkg upgrade -y && pkg install -y wget && wget -O install-ubuntu
 
 <summary>Features</summary>
 
-- anti-root-fuse
+- anti-root fuse
 - interactive installation
 - color output (if supported)
 - command line options
@@ -169,7 +166,9 @@ On the first run of the above command, you will be prompted for a **vnc password
 
 To connect to the vnc server, you will need to download and install a vnc viewer app of your choice. I recommend [AVNC](https://f-droid.org/packages/com.gaurav.avnc "Download AVNC app.") in this case.
 
-Open the vnc viewer app, click add server and fill in with the following details.
+[Start the vnc server](#how-to-start-vnc-server "How to start vnc server.") and **minimize the termux app**.
+
+Now open the vnc viewer app, click add server and fill in with the following details.
 
 **Name**
 
@@ -185,7 +184,7 @@ localhost
 
 **Port**
 
-The default port differs for the root user and other users and don't ask me why, I just got here.
+The default display port differs for the root user and other users and don't ask me why, I just got here.
 
 | user        | port |
 | ----------- | ---- |
@@ -194,7 +193,7 @@ The default port differs for the root user and other users and don't ask me why,
 
 **Password**
 
-Enter the **vnc password** from [above](#how-to-start-vnc-server "How to start vnc server.").
+Enter the **vnc password** you set [before](#how-to-start-vnc-server "How to start vnc server.").
 
 ## Have fun
 
@@ -220,7 +219,7 @@ If you installed the system in a custom directory, supply the path to the instal
 
 ## FAQ
 
-If got some hickups during installation or have some questions, you are probably not the first one and here are the answers to some frequently asked questions.
+If you got some hickups during the installation or have some burning questions, you are probably not the first one and a few frequently asked questions have been answered below.
 
 ### What happens if termux has root access?
 
@@ -243,6 +242,8 @@ Disabling the anti-root-fuse will require a deeper understanding of the install 
 **This is definitely a bad idea and you are completely liable for any unintended effects of this action**.
 
 Just remember, I am mostly lazy and would never implement an anti-root-fuse for absolutely no reason.
+
+Let me know if you find any issues or suggest any improvements in the [issues section](https://github.com/jorexdeveloper/termux-ubuntu/issues "The issues section.")
 
 ## License
 
