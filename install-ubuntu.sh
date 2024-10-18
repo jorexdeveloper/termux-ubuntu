@@ -1357,7 +1357,7 @@ msg() {
 	while getopts ":tseanNqm:l" opt; do
 		case "${opt}" in
 			t)
-				prefix=" ${Y}✔ "
+				prefix="\n ${Y}✔ "
 				continue
 				;;
 			s)
