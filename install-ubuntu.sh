@@ -44,15 +44,15 @@ root_check() {
 ################################################################################
 print_intro() {
 	local spaces=""
-	for ((i = $(((($(stty size | cut -d ' ' -f2) - 30) / 2))); i > 0; i--)); do
+	for ((i = $(((($(stty size | cut -d ' ' -f2) - 34) / 2))); i > 0; i--)); do
 		spaces+=" "
 	done
 	clear
-	msg -a "${spaces} _   _ _             _        "
-	msg -a "${spaces}| | | | |__ _  _ _ _| |_ _  _ "
-	msg -a "${spaces}| |_| | '_ \ || | ' \  _| || |"
-	msg -a "${spaces} \___/|_.__/\_,_|_||_\__|\_,_|"
-	msg -a "${spaces}           ${VERSION}"
+	msg -a "${spaces} _   _ ___ _   _ _  _ _____ _   _ "
+	msg -a "${spaces}| | | | _ ) | | | \| |_   _| | | |"
+	msg -a "${spaces}| |_| | _ \ |_| | .' | | | | |_| |"
+	msg -a "${spaces} \___/|___/\___/|_|\_| |_|  \___/ "
+	msg -a "${spaces}             ${VERSION}"
 	msg -t "Hey there,👋 I'm ${AUTHOR}"
 	msg "I am here to help you to install ${DISTRO_NAME}."
 }
