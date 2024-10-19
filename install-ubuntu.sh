@@ -227,7 +227,7 @@ verify_rootfs_archive() {
 extract_rootfs_archive() {
 	if [ -z "${KEEP_ROOTFS_DIRECTORY}" ]; then
 		msg -t "Grab a coffee while I extract the rootfs archive. This will take a while..."
-		trap 'rm -rf "${ROOTFS_DIRECTORY}"; msg -q "Exiting immediately as requested.                        "' HUP INT TERM
+		trap 'rm -rf "${ROOTFS_DIRECTORY}"; msg -q "Exiting immediately as requested.                           "' HUP INT TERM
 		mkdir -p "${ROOTFS_DIRECTORY}"
 		set +e
 		if proot --link2symlink tar --strip=0 --delay-directory-restore --warning=no-unknown-keyword --extract --gz --exclude="dev" --file="${ARCHIVE_NAME}" --directory="${ROOTFS_DIRECTORY}" --checkpoint=1 --checkpoint-action=ttyout="${I}${Y}   I have extracted %{}T in %ds so far.%*\r${N}${V}" &>>"${LOG_FILE}"; then
