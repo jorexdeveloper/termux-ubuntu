@@ -126,19 +126,13 @@ Now you need to install a desktop environment, as it is not pre-installed and a 
 apt update && apt full-upgrade
 ```
 
-2.  Unminimize system
-
-```bash
-unminimize <<<"y"
-```
-
-3.  Install vnc server
+2.  Install vnc server
 
 ```bash
 apt install tigervnc-standalone-server dbus-x11 sudo
 ```
 
-4. Install desktop
+3. Install desktop
 
 ```bash
 apt install ubuntu-desktop
