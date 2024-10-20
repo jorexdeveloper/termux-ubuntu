@@ -27,8 +27,9 @@ AUTHOR="Jore"
 GITHUB="https://github.com/jorexdeveloper"
 REPOSITORY="termux-ubuntu"
 NAME="$(basename "${0}")"
-VERSION="20230626"
+RELEASE="20241002"
 CODE_NAME="jammy"
+VERSION="22.04"
 
 ################################################################################
 # Prevents running this program as root to prevent harm to system directories  #
@@ -52,7 +53,7 @@ print_intro() {
 	msg -a "${spaces}| | | | _ ) | | | \| |_   _| | | |"
 	msg -a "${spaces}| |_| | _ \ |_| | .' | | | | |_| |"
 	msg -a "${spaces} \___/|___/\___/|_|\_| |_|  \___/ "
-	msg -a "${spaces}             ${VERSION}"
+	msg -a "${spaces}       ${VERSION} ${CODE_NAME}-${RELEASE}"
 	msg -t "Hey there,👋 I'm ${AUTHOR}"
 	msg "I am here to help you to install ${DISTRO_NAME}."
 }
@@ -202,8 +203,8 @@ verify_rootfs_archive() {
 		msg -t "Give me a sec to verify the integrity of the rootfs archive..."
 		local trusted_shasums="$(
 			cat <<-EOF
-				35403425bea2fd18c36843376830d583c85060bc1ec3fdb8dcb842797a186c85 *ubuntu-jammy-core-cloudimg-armhf-root.tar.gz
-				7db67849df74ac98700ea6d83b591e740b7e4af177f2a3b3794773969e48642e *ubuntu-jammy-core-cloudimg-arm64-root.tar.gz
+				214a4b87e8bd4967b30d4d3c27589c1aa72c5e9c0eecbe3d9bcab16159e4bd0e *ubuntu-22.04-server-cloudimg-armhf-root.tar.xz
+				507a09fb8572542225c0ff677468e78c7f9df753ffb857e89e98480505e6ba9d *ubuntu-22.04-server-cloudimg-arm64-root.tar.xz
 			EOF
 		)"
 		if grep --regexp="${ARCHIVE_NAME}$" <<<"${trusted_shasums}" | sha256sum --quiet --check &>>"${LOG_FILE}"; then
@@ -230,7 +231,7 @@ extract_rootfs_archive() {
 		trap 'rm -rf "${ROOTFS_DIRECTORY}"; msg -q "Exiting immediately as requested.                           "' HUP INT TERM
 		mkdir -p "${ROOTFS_DIRECTORY}"
 		set +e
-		if proot --link2symlink tar --strip=0 --delay-directory-restore --warning=no-unknown-keyword --extract --gz --exclude="dev" --file="${ARCHIVE_NAME}" --directory="${ROOTFS_DIRECTORY}" --checkpoint=1 --checkpoint-action=ttyout="${I}${Y}   I have extracted %{}T in %ds so far.%*\r${N}${V}" &>>"${LOG_FILE}"; then
+		if proot --link2symlink tar --strip=0 --delay-directory-restore --warning=no-unknown-keyword --extract --xz --exclude="dev" --file="${ARCHIVE_NAME}" --directory="${ROOTFS_DIRECTORY}" --checkpoint=1 --checkpoint-action=ttyout="${I}${Y}   I have extracted %{}T in %ds so far.%*\r${N}${V}" &>>"${LOG_FILE}"; then
 			msg -s "Finally, I am done extracting the rootfs archive."
 		else
 			rm -rf "${ROOTFS_DIRECTORY}"
@@ -251,9 +252,9 @@ create_rootfs_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     ${DISTRO_NAME} launcher, version ${CODE_NAME}-${VERSION}                                  #
+		#     ${DISTRO_NAME} launcher, version ${VERSION} ${CODE_NAME}-${RELEASE}                            #
 		#                                                                              #
-		#     Launches ${DISTRO_NAME}.                                                 #
+		#     Launches ${DISTRO_NAME}.                                                         #
 		#                                                                              #
 		#     Copyright (C) 2023  ${AUTHOR} <${GITHUB}>             #
 		#                                                                              #
@@ -386,7 +387,7 @@ create_rootfs_launcher() {
 		        echo "    --id[=UID:GID]"
 		        echo "            Make the current user and group appear as UID and GID."
 		        echo "    --kernel-release[=STRING]"
-		        echo "            Make current kernel realease appear as STRING."
+		        echo "            Make current kernel release appear as STRING."
 		        echo "            (default='${KERNEL_RELEASE}')"
 		        echo "    -h, --help"
 		        echo "            Print this information and exit."
@@ -399,7 +400,7 @@ create_rootfs_launcher() {
 		        exit 0
 		        ;;
 		    -v | --version)
-		        echo "${DISTRO_NAME} launcher, version ${CODE_NAME}-${VERSION}."
+		        echo "${DISTRO_NAME} launcher, version ${VERSION} ${CODE_NAME}-${RELEASE}."
 		        echo "Copyright (C) 2023 ${AUTHOR} <${GITHUB}>."
 		        echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
 		        echo ""
@@ -615,7 +616,7 @@ create_vnc_launcher() {
 
 		################################################################################
 		#                                                                              #
-		#     VNC launcher, version ${CODE_NAME}-${VERSION}                                     #
+		#     VNC launcher, version ${VERSION} ${CODE_NAME}-${RELEASE}                               #
 		#                                                                              #
 		#     This script starts the VNC server.                                       #
 		#                                                                              #
@@ -835,7 +836,7 @@ uninstall_rootfs() {
 # Prints the program version information                                       #
 ################################################################################
 print_version() {
-	msg -a "${DISTRO_NAME} installer, version ${VERSION}-${CODE_NAME}."
+	msg -a "${DISTRO_NAME} installer, version ${VERSION} ${RELEASE}-${CODE_NAME}."
 	msg -a "Copyright (C) 2023 ${AUTHOR} <${U}${GITHUB}${L}>."
 	msg -a "License GPLv3+: GNU GPL version 3 or later <${U}http://gnu.org/licenses/gpl.html${L}>."
 	msg -aN "This is free software, you are free to change and redistribute it."
@@ -1506,7 +1507,7 @@ DISTRO_SHORTCUT="${TERMUX_FILES_DIR}/usr/bin/ub"
 DISTRO_LAUNCHER="${TERMUX_FILES_DIR}/usr/bin/ubuntu"
 
 # Base url of rootfs archive
-BASE_URL="https://partner-images.canonical.com/core/${CODE_NAME}/${VERSION}"
+BASE_URL="https://cloud-images.ubuntu.com/releases/${CODE_NAME}/release-${RELEASE}"
 
 # Fake host system kernel
 KERNEL_RELEASE="6.2.1-ubuntu-proot"
@@ -1623,8 +1624,7 @@ fi
 # Install actions
 if ${ACTION_INSTALL}; then
 	check_rootfs_directory
-	ARCHIVE_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}-root.tar.gz"
-	# MANIFEST_NAME="ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}.manifest"
+	ARCHIVE_NAME="ubuntu-22.04-server-cloudimg-${SYS_ARCH}-root.tar.xz" # "ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}-root.tar.gz"
 	download_rootfs_archive
 	verify_rootfs_archive
 	extract_rootfs_archive
