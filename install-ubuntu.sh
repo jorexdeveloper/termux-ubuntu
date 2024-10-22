@@ -27,8 +27,8 @@ AUTHOR="Jore"
 GITHUB="https://github.com/jorexdeveloper"
 REPOSITORY="termux-ubuntu"
 NAME="$(basename "${0}")"
-RELEASE="20241002"
-CODE_NAME="jammy"
+RELEASE="20241004"
+CODE_NAME="noble"
 VERSION="22.04"
 
 ################################################################################
@@ -1507,7 +1507,7 @@ DISTRO_SHORTCUT="${TERMUX_FILES_DIR}/usr/bin/ub"
 DISTRO_LAUNCHER="${TERMUX_FILES_DIR}/usr/bin/ubuntu"
 
 # Base url of rootfs archive
-BASE_URL="https://cloud-images.ubuntu.com/releases/${CODE_NAME}/release-${RELEASE}"
+BASE_URL="https://cloud-images.ubuntu.com/${CODE_NAME}/${RELEASE}"
 
 # Fake host system kernel
 KERNEL_RELEASE="6.2.1-ubuntu-proot"
@@ -1624,7 +1624,7 @@ fi
 # Install actions
 if ${ACTION_INSTALL}; then
 	check_rootfs_directory
-	ARCHIVE_NAME="ubuntu-22.04-server-cloudimg-${SYS_ARCH}-root.tar.xz" # "ubuntu-${CODE_NAME}-core-cloudimg-${SYS_ARCH}-root.tar.gz"
+	ARCHIVE_NAME="${CODE_NAME}-server-cloudimg-${SYS_ARCH}-root.tar.xz"
 	download_rootfs_archive
 	verify_rootfs_archive
 	extract_rootfs_archive
