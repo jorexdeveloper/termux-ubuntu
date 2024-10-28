@@ -6,7 +6,7 @@
 #                                                                              #
 #     Installs Kali NetHunter in Termux.                                       #
 #                                                                              #
-#     Copyright (C) 2023  Jore <https://github.com/jorexdeveloper/>            #
+#     Copyright (C) 2023  Jore <https://github.com/jorexdeveloper>             #
 #                                                                              #
 #     This program is free software: you can redistribute it and/or modify     #
 #     it under the terms of the GNU General Public License as published by     #
@@ -45,7 +45,7 @@ root_check() {
 ################################################################################
 print_intro() {
 	local spaces=""
-	for ((i = $(((($(stty size | cut -d ' ' -f2) - 34) / 2))); i > 0; i--)); do
+	for ((i = $((($(stty size | cut -d ' ' -f2) - 34) / 2)); i > 0; i--)); do
 		spaces+=" "
 	done
 	clear
@@ -857,8 +857,10 @@ print_usage() {
 	msg "        Skip the installation steps."
 	msg -- "--no-configs"
 	msg "        Skip the configuration steps."
-	msg -- "--uninstall"
+	msg -- "-u, --uninstall"
 	msg "        Uninstall ${DISTRO_NAME}."
+	msg -- "-l, --log"
+	msg "        Create log file."
 	msg -- "-h, --help"
 	msg "        Print this information and exit."
 	msg -- "-v, --version"
@@ -1516,7 +1518,7 @@ KERNEL_RELEASE="6.2.1-ubuntu-proot"
 DEFAULT_ROOTFS_DIR="${TERMUX_FILES_DIR}/ubuntu"
 
 # Output for unwanted messages
-LOG_FILE="/dev/null" # "${NAME}.log"
+LOG_FILE="/dev/null"
 
 # Enable color by default
 COLOR_SUPPORT=on
@@ -1551,7 +1553,8 @@ while [ "${#}" -gt 0 ]; do
 			;;
 		--no-install) ACTION_INSTALL=false ;;
 		--no-configs) ACTION_CONFIGURE=false ;;
-		--uninstall) ACTION_UNINSTALL=true ;;
+		-u | --uninstall) ACTION_UNINSTALL=true ;;
+		-l | --log) LOG_FILE="${NAME}.log" ;;
 		-v | --version)
 			print_version
 			exit 0
