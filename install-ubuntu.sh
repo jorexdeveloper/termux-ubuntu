@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/env bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 ################################################################################
 #                                                                              #
@@ -24,7 +24,7 @@
 ################################################################################
 # shellcheck disable=SC2034
 
-# ATTENTION!!! CHANGE BELOW!!!
+# ATTENTION!!! CHANGE BELOW FUNTIONS FOR DISTRO DEPENDENT ACTIONS!!!
 
 # Called before any safety checks
 # New Variables: AUTHOR GITHUB LOG_FILE ACTION_INSTALL ACTION_CONFIGURE
@@ -33,18 +33,34 @@ pre_check_actions() {
 	return
 }
 
-# Called when printing intro
+# Called before printing intro
 # New Variables: none
 distro_banner() {
 	local spaces=''
-	for ((i = $((($(stty size | cut -d ' ' -f2) - 31) / 2)); i > 0; i--)); do
+	for ((i = $((($(stty size | cut -d ' ' -f2) - 40) / 2)); i > 0; i--)); do
 		spaces+=' '
 	done
-	msg -a "${spaces}       __             __"
-	msg -a "${spaces} __ __/ /  __ _____  / /___ __"
-	msg -a "${spaces}/ // / _ \/ // / _ \/ __/ // /"
-	msg -a "${spaces}\_,_/_.__/\_,_/_//_/\__/\_,_/"
-	msg -a "${spaces}     ${Y}${VERSION_NAME}${C}"
+	msg -a "${spaces}${R}            .-/+oossssoo+/-."
+	msg -a "${spaces}${R}        ':+ssssssssssssssssss+:'"
+	msg -a "${spaces}${R}      -+ssssssssssssssssssyyssss+-"
+	msg -a "${spaces}${R}    .osssssssssssssssss ${N}dMMMN ${R}sssso."
+	msg -a "${spaces}${R}   /ssssssssss ${N}hdmmNNmmyNMMMM ${R}ssssss/"
+	msg -a "${spaces}${R}  +ssssssss h y ${N}MMMMMMMNdddd ${R}ssssssss+"
+	msg -a "${spaces}${R} /sssssss ${N}hNMM ${R}y ${N}hyyyyhmNMMMN ${R}ssssssss/"
+	msg -a "${spaces}${R}.sssssss ${N}dMMMN ${R}sssssssss ${N}hNMMM ${R}ssssssss."
+	msg -a "${spaces}${R}+sss ${N}hhhyNMMN ${R}sssssssssss ${N}yNMMM ${R}sssssss+"
+	msg -a "${spaces}${R}os ${N}yNMMMNyMM ${R}sssssssssssss ${N}hmmm ${R}ssssssso"
+	msg -a "${spaces}${R}os ${N}yNMMMNyMM ${R}sssssssssssssshmmmh${R}ssssssso"
+	msg -a "${spaces}${R}+sss ${N}hhhyNMMN ${R}sssssssssss ${N}yNMMM ${R}sssssss+"
+	msg -a "${spaces}${R}.sssssss ${N}dMMMN ${R}sssssssss ${N}hNMMM ${R}ssssssss."
+	msg -a "${spaces}${R} /sssssss ${N}hNMM ${R}y ${N}hyyyyhdNMMMN ${R}ssssssss/"
+	msg -a "${spaces}${R}  +ssssssss d y ${N}MMMMMMMMdddd ${R}ssssssss+"
+	msg -a "${spaces}${R}   /ssssssssss ${N}hdmNNNNmyNMMMM ${R}ssssss/"
+	msg -a "${spaces}${R}    .osssssssssssssssss ${N}dMMMN ${R}sssso."
+	msg -a "${spaces}${R}      -+ssssssssssssssss ${N}yy ${R}ssss+-"
+	msg -a "${spaces}${R}        ':+ssssssssssssssssss+:'"
+	msg -a "${spaces}${R}            .-/+oossssoo+/-."
+	msg -a "${spaces}       ${DISTRO_NAME} ${Y}${VERSION_NAME}"
 }
 
 # Called after checking architecture and required pkgs
@@ -62,21 +78,11 @@ pre_install_actions() {
 # Called after extracting rootfs
 # New Variables: KEEP_ROOTFS_ARCHIVE
 post_install_actions() {
-	return
-}
-
-# Called before making configurations
-# New Variables: none
-pre_config_actions() {
-	return
-}
-
-# Called after configurations
-# New Variables: none
-post_config_actions() {
+	msg -t "Lemme create an xstartup script for vnc."
 	local xstartup="$(
+		# Customize depending on distribution defaults
 		cat 2>>"${LOG_FILE}" <<-EOF
-			#!/bin/bash
+			#!/usr/bin/bash
 			#############################
 			##          All            ##
 			export XDG_RUNTIME_DIR=/tmp/runtime-"\${USER-root}"
@@ -110,7 +116,7 @@ post_config_actions() {
 			# exec i3
 		EOF
 	)"
-	{
+	if {
 		mkdir -p "${ROOTFS_DIRECTORY}/root/.vnc"
 		echo "${xstartup}" >"${ROOTFS_DIRECTORY}/root/.vnc/xstartup"
 		chmod 744 "${ROOTFS_DIRECTORY}/root/.vnc/xstartup"
@@ -119,7 +125,32 @@ post_config_actions() {
 			echo "${xstartup}" >"${ROOTFS_DIRECTORY}/home/${DEFAULT_LOGIN}/.vnc/xstartup"
 			chmod 744 "${ROOTFS_DIRECTORY}/home/${DEFAULT_LOGIN}/.vnc/xstartup"
 		fi
-	} 2>>"${LOG_FILE}"
+	} 2>>"${LOG_FILE}"; then
+		msg -s "Done, xstartup script created successfully!"
+	else
+		msg -e "Sorry, I failed to create the xstartup script for vnc."
+	fi
+}
+
+# Called before making configurations
+# New Variables: none
+pre_config_actions() {
+	return
+}
+
+# Called after configurations
+# New Variables: none
+post_config_actions() {
+	# execute distro specific command for locale generation
+	if [ -f "${ROOTFS_DIRECTORY}/etc/locale.gen" ] && [ -x "${ROOTFS_DIRECTORY}/sbin/dpkg-reconfigure" ]; then
+		msg -t "Hold on while I generate the locales for you."
+		sed -i -E 's/#[[:space:]]?(en_US.UTF-8[[:space:]]+UTF-8)/\1/g' "${ROOTFS_DIRECTORY}/etc/locale.gen"
+		if distro_exec DEBIAN_FRONTEND=noninteractive /sbin/dpkg-reconfigure locales &>"${LOG_FILE}"; then
+			msg -s "Yup, locales are ready!"
+		else
+			msg -e "Sorry, I failed to generate the locales."
+		fi
+	fi
 }
 
 # Called before complete message
@@ -136,6 +167,10 @@ post_complete_actions() {
 		msg "If you need to install additional packages, check out the documentation for a guide."
 	fi
 }
+
+# only used here
+# ubuntu code name
+# version and release
 
 version="22.04"
 code_name="noble"
@@ -154,7 +189,7 @@ TRUSTED_SHASUMS="$(
 	EOF
 )"
 
-ARCHIVE_STRIP_DIRS=0
+ARCHIVE_STRIP_DIRS=0 # directories stripped by tar when extracting rootfs archive
 KERNEL_RELEASE="6.2.1-ubuntu-proot"
 BASE_URL="https://cloud-images.ubuntu.com/${code_name}/${release}"
 
