@@ -173,18 +173,18 @@ post_complete_actions() {
 	fi
 }
 
-# only used here
-# ubuntu code name
-# version and release
+# These variables are
+# only used in this script:
+# 		name, code_name, release
 
-version="22.04"
+name="22.04 LTS"
 code_name="noble"
 release="20250313"
 
 DISTRO_NAME="Ubuntu"
 PROGRAM_NAME="$(basename "${0}")"
 DISTRO_REPOSITORY="termux-ubuntu"
-VERSION_NAME="${version} ${code_name}-${release}"
+VERSION_NAME="${name} ${code_name}-${release}"
 
 SHASUM_CMD=sha256sum
 TRUSTED_SHASUMS="$(
