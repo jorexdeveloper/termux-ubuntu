@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout repository
@@ -46,7 +47,6 @@ jobs:
             echo "::notice::No changes to commit. Exiting..."
             exit 0
           fi
-
           echo "::notice::Changes found! Preparing for pull request..."
           echo "branch=auto-rootfs-update-${{ env.version }}" >> $GITHUB_ENV
           echo "create_pull_request=true" >> $GITHUB_ENV
