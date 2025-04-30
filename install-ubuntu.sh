@@ -179,7 +179,7 @@ post_complete_actions() {
 
 name="22.04 LTS"
 code_name="noble"
-release="20250313"
+release="20250425"
 
 DISTRO_NAME="Ubuntu"
 PROGRAM_NAME="$(basename "${0}")"
@@ -189,8 +189,8 @@ VERSION_NAME="${name} ${code_name}-${release}"
 SHASUM_CMD=sha256sum
 TRUSTED_SHASUMS="$(
 	cat <<-EOF
-		ba9896cbf03482f4ceaaa3357c565589f62eea37262fc469c023a46dfb87a82d *noble-server-cloudimg-arm64-root.tar.xz
-		d2ad23546b97ccfe1dfa0add8f42c2b64ea52fbce46fc1ea71cacd09ed01898b *noble-server-cloudimg-armhf-root.tar.xz
+		8727cbca94b240e0037b76e46de76dba66735a9b7e0e7969ea3e11ac69a9f17b *noble-server-cloudimg-arm64-root.tar.xz
+		88fd1224cce813f804007ff37f6861bdcb298d3e32679477e96e336a73fbcda5 *noble-server-cloudimg-armhf-root.tar.xz
 	EOF
 )"
 
