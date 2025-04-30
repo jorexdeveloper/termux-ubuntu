@@ -1,4 +1,3 @@
-from hmac import new
 import requests
 import re
 import sys
@@ -45,7 +44,8 @@ def fetch_latest_checksums(version):
         r.raise_for_status()
         raw_checksums = r.text.strip().splitlines()
         expected_suffixes = [
-            "arm64-root.tar.xz", "armhf-root.tar.xz"]
+            "arm64-root.tar.xz",
+            "armhf-root.tar.xz"]
         filtered = []
         for line in raw_checksums:
             for suffix in expected_suffixes:
@@ -106,7 +106,7 @@ def update_script(script_path, new_version, new_checksums):
         with open(script_path, "w") as f:
             f.write(content)
         print(
-            f"[+] Updated {script_path} to version '{new_version}' ({NAME} {CODE_NAME}).")
+            f"[+] Updated {script_path} to {NAME} ({CODE_NAME}-{new_version}).")
     except Exception as e:
         raise Exception(f"Failed to update installer script: {str(e)}")
 
@@ -189,7 +189,7 @@ def main():
         if update_success:
             update_status_json(
                 STATUS_SCRIPT,
-                f"Ubuntu {NAME} {CODE_NAME}-{selected_version} Available")
+                f"Ubuntu {NAME} ({CODE_NAME}-{selected_version}) Available")
         else:
             update_status_json(STATUS_SCRIPT, "Unavailable")
         if not update_success:
