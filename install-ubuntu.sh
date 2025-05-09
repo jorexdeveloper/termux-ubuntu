@@ -60,7 +60,7 @@ distro_banner() {
 	msg -a "${spaces}${R}      -+ssssssssssssssss ${N}yy ${R}ssss+-"
 	msg -a "${spaces}${R}        ':+ssssssssssssssssss+:'"
 	msg -a "${spaces}${R}            .-/+oossssoo+/-."
-	msg -a "${spaces}       ${DISTRO_NAME} ${Y}${VERSION_NAME}"
+	msg -a "${spaces}    ${DISTRO_NAME} ${Y}${VERSION_NAME}"
 }
 
 # Called after checking architecture and required pkgs
@@ -140,7 +140,7 @@ post_install_actions() {
 # Called before making configurations
 # New Variables: none
 pre_config_actions() {
-	return
+	echo "${ROOTFS_DIRECTORY}" >"${ROOTFS_DIRECTORY}/etc/debian_chroot" 2>>"${LOG_FILE}"
 }
 
 # Called after configurations
@@ -150,7 +150,7 @@ post_config_actions() {
 	if [ -f "${ROOTFS_DIRECTORY}/etc/locale.gen" ] && [ -x "${ROOTFS_DIRECTORY}/sbin/dpkg-reconfigure" ]; then
 		msg -t "Hold on while I generate the locales for you."
 		sed -i -E 's/#[[:space:]]?(en_US.UTF-8[[:space:]]+UTF-8)/\1/g' "${ROOTFS_DIRECTORY}/etc/locale.gen"
-		if distro_exec DEBIAN_FRONTEND=noninteractive /sbin/dpkg-reconfigure locales &>>"${LOG_FILE}"; then
+		if distro_exec DEBIAN_FRONTEND=noninteractive /sbin/dpkg-reconfigure locales >>"${LOG_FILE}" 2>&1; then
 			msg -s "Done, the locales are ready!"
 		else
 			msg -e "Sorry, I failed to generate the locales."
