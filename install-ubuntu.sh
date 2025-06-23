@@ -236,7 +236,7 @@ DISTRO_NAME="Ubuntu"
 PROGRAM_NAME="$(basename "${0}")"
 DISTRO_REPOSITORY="termux-ubuntu"
 VERSION_NAME="${name} ${code_name}-${release}"
-KERNEL_RELEASE="${DISTRO_NAME// /-}-${VERSION_NAME// /-}-proot"
+KERNEL_RELEASE="$(uname -r)"
 
 SHASUM_CMD=sha256sum
 TRUSTED_SHASUMS="$(
