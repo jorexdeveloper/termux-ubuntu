@@ -160,7 +160,7 @@ set_up_de() {
 	trap 'buffer -h; echo; msg -fem2; exit 130' INT
 	buffer -s
 
-	local pkgs=(tigervnc-standalone-server dbus-x11 ubuntu-desktop)
+	local pkgs=(tigervnc-standalone-server dbus-x11 xubuntu-desktop-minimal)
 	if buffer -i apt update && distro_exec apt update &&
 		buffer -i apt full-upgrade && distro_exec apt full-upgrade &&
 		buffer -i apt install -y "${pkgs[@]}" && distro_exec apt install -y "${pkgs[@]}"; then
@@ -177,14 +177,14 @@ set_up_de() {
 				unset SESSION_MANAGER
 				unset DBUS_SESSION_BUS_ADDRESS
 
-				export XDG_RUNTIME_DIR=\${TMPDIR}/runtime-"\${USER}"
+				export XDG_RUNTIME_DIR=\${TMPDIR}/runtime-"\$(id -u)"
 				export SHELL=\${SHELL}
 
 				if [[ -r ~/.Xresources ]]; then
 				    xrdb ~/.Xresources
 				fi
 
-				exec gnome-session
+				exec startxfce4
 			EOF
 		)
 
