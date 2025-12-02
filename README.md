@@ -7,19 +7,23 @@
 <p align="center">
 	<a href="https://github.com/jorexdeveloper/termux-ubuntu/stargazers">
 		<img
-			src="https://img.shields.io/github/stars/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=dd4814&style=for-the-badge">
+			src="https://img.shields.io/github/stars/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=dd4814&style=for-the-badge"
+      alt="stars">
 	</a>
 	<a href="https://github.com/jorexdeveloper/termux-ubuntu/issues">
 		<img
-			src="https://img.shields.io/github/issues/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=f4a900&style=for-the-badge">
+			src="https://img.shields.io/github/issues/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=f4a900&style=for-the-badge"
+      alt="issues">
 	</a>
 	<a href="https://github.com/jorexdeveloper/termux-ubuntu/contributors">
 		<img
-			src="https://img.shields.io/github/contributors/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=77216f&style=for-the-badge">
+			src="https://img.shields.io/github/contributors/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=77216f&style=for-the-badge"
+      alt="contributors">
 	</a>
 	<a href="https://cloud-images.ubuntu.com/noble/20251113">
 		<img
-			src="https://img.shields.io/badge/dynamic/json?label=Status%20&query=$.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjorexdeveloper%2Ftermux-ubuntu%2Fmain%2Fstatus.json&color=lightgray&logo=ubuntu&logoSize=auto&style=for-the-badge">
+			src="https://img.shields.io/badge/dynamic/json?label=Status%20&query=$.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjorexdeveloper%2Ftermux-ubuntu%2Fmain%2Fstatus.json&color=lightgray&logo=ubuntu&logoSize=auto&style=for-the-badge"
+      alt="status">
 	</a>
 </p>
 
@@ -69,29 +73,32 @@ Download and install the [Termux](https://github.com/termux/termux-app/releases/
 
 1. Upgrade Termux packages
 
-```bash
-pkg update && pkg upgrade
-```
+   ```bash
+   pkg update && pkg upgrade
+   ```
 
 2. Install `curl`
 
-```bash
-pkg install curl
-```
+   ```bash
+   pkg install curl
+   ```
 
 3. Download the install script
 
-```bash
-curl -fsSLO https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh
-```
+   ```bash
+   curl -fsSLO https://raw.githubusercontent.com/jorexdeveloper/termux-ubuntu/main/install-ubuntu.sh
+   ```
 
 4. Execute the install script
 
-```bash
-bash install-ubuntu.sh
-```
+   ```bash
+   bash install-ubuntu.sh
+   ```
 
-You can also customize the installation with command-line options (See `bash install-ubuntu.sh --help` for more information).
+> [!TIP]
+> You can customize the installation with command-line options.
+>
+> See `bash install-ubuntu.sh --help` for usage information.
 
 It's probably a good idea to inspect any install script from projects you don't yet know. You can do that by downloading the install script, looking through it to ensure everything looks fine before running it.
 
@@ -119,9 +126,12 @@ or with a shorter version
 ub
 ```
 
-You will be logged in with the default username, **kali** (You can log in as another user by providing their username as an argument.)
+You will be logged in with the default username, **root**.
 
-See `ubuntu --help` for usage information.
+> [!TIP]
+> You can log in as another user by providing their username as an argument.
+>
+> See `ubuntu --help` for usage information.
 
 ### How to Set Up the Desktop
 
@@ -131,27 +141,30 @@ You will need to install a desktop environment and a VNC server to get a graphic
 
 1. Upgrade system packages
 
-```bash
-apt update && apt full-upgrade
-```
+   ```bash
+   apt update && apt full-upgrade
+   ```
 
 2. Install VNC server
 
-```bash
-apt install tigervnc-standalone-server dbus-x11
-```
+   ```bash
+   apt install tigervnc-standalone-server dbus-x11
+   ```
 
 3. Install desktop environment
 
-```bash
-apt install ubuntu-desktop
-```
+   ```bash
+   apt install xubuntu-desktop-minimal
+   ```
 
-This command will not only take several gigabytes of your storage but also take a while to complete. Grab a coffee and ensure that Termux remains open during the installation to avoid potential issues (You can also acquire Termux wake lock, but it will only work if battery optimization is disabled).
+This command will not only take several gigabytes of your storage but also take a while to complete. Grab a coffee and ensure that Termux remains open during the installation to avoid potential issues.
+
+> [!TIP]
+> You can acquire the Termux wake lock, but it will only work if battery optimization is disabled.
 
 ## Login
 
-Now all that's left is to log in to your newly installed system and start playing around with some commands. To do that, you need to start a VNC server in the system and connect to it through a VNC viewer.
+Now all that's left is to log in to your newly installed system and start playing around with some commands. To do that, you need to start a VNC server in ubuntu and connect to it through a VNC viewer.
 
 ### How to Start the Desktop
 
@@ -161,7 +174,10 @@ Now all that's left is to log in to your newly installed system and start playin
 vnc
 ```
 
-**Use `vnc kill` to stop the VNC server** and terminate the Desktop session. (See `vnc help` for more information).
+> [!TIP]
+> Use `vnc kill` to stop the VNC server and terminate the Desktop session.
+>
+> See `vnc help` for usage information.
 
 On the first run of the command above, you will be prompted for a **VNC password**. This is the password that will be used to securely connect to the VNC server in the VNC viewer app, so save it somewhere.
 
@@ -169,31 +185,31 @@ On the first run of the command above, you will be prompted for a **VNC password
 
 To connect to the VNC server and view the desktop, you will need to download and install a VNC viewer app of your choice (I recommend [AVNC](https://github.com/gujjwal00/avnc/releases/latest "Download AVNC from the official repository.")).
 
-[Start the desktop](#how-to-start-the-desktop "View this section.") and **minimize** Termux.
+1. [Start the desktop](#how-to-start-the-desktop "View this section.") and **minimize** Termux.
 
-Then open the VNC viewer app, click add server, and fill in the following details:
+2. Open the VNC viewer app, click add server, and fill in the following details:
 
-**Name**
+   - **Name**
 
-```txt
-Ubuntu Desktop
-```
+     ```txt
+     Ubuntu Desktop
+     ```
 
-**Host**
+   - **Host**
 
-```txt
-localhost
-```
+     ```txt
+     localhost
+     ```
 
-**Port**
+   - **Port**
 
-| username | port                       |
-| -------- | -------------------------- |
-| root     | 5900 (works for all users) |
+     | username | port                       |
+     | -------- | -------------------------- |
+     | root     | 5900 (works for all users) |
 
-**Password**
+   - **Password**
 
-Enter the **VNC password** you set when [starting the desktop](#how-to-start-the-desktop "View this section.") for the first time.
+     Enter the **VNC password** you set when [starting the desktop](#how-to-start-the-desktop "View this section.") for the first time.
 
 ## Have Fun
 
@@ -227,7 +243,8 @@ To back up your installation, execute the following command:
 ubuntu --backup <archive-name> [<dirs-to-exclude>]
 ```
 
-The **backup is performed as a TAR archive** and **compression is determined by the output file extension.**
+> [!NOTE]
+> The backup is performed as a **tar** archive and compression is determined by the output file extension.
 
 ### How to Restore
 
@@ -237,7 +254,10 @@ To restore your backed-up installation from the archive, execute the following c
 ubuntu --restore <archive-name>
 ```
 
-**The rootfs MUST be restored to the original location** but you can [rename](#how-to-rename "View this section") it afterwards.
+> [!NOTE]
+> The rootfs **MUST** be restored to the original location.
+>
+> You can [rename](#how-to-rename "View this section") it afterwards.
 
 ### How to Uninstall
 
