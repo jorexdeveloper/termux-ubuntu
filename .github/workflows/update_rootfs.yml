@@ -36,7 +36,7 @@ jobs:
         id: version
         run: |
           echo "::notice::Reading rootfs version from install-ubuntu.sh..."
-          version=$(grep -oP '^(name|code_name|release)="\K[^"]+' install-ubuntu.sh | sed -E ':a;N;$!ba;s/\s|\n/-/g')
+          version=$(grep -oP '^(name|code_name|release)=\K[^"]+' install-ubuntu.sh | sed -E ':a;N;$!ba;s/\s|\n/-/g')
           echo "version=$version" >> $GITHUB_ENV
           echo "::notice::RootFS Version = '$version'"
 
