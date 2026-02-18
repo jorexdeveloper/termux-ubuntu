@@ -20,7 +20,7 @@
 			src="https://img.shields.io/github/contributors/jorexdeveloper/termux-ubuntu?colorA=5e2750&colorB=77216f&style=for-the-badge"
       alt="contributors">
 	</a>
-	<a href="https://cloud-images.ubuntu.com/noble/20260214">
+	<a href="https://cloud-images.ubuntu.com/noble/20260217">
 		<img
 			src="https://img.shields.io/badge/dynamic/json?label=Status%20&query=$.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjorexdeveloper%2Ftermux-ubuntu%2Fmain%2Fstatus.json&color=lightgray&logo=ubuntu&logoSize=auto&style=for-the-badge"
       alt="status">
